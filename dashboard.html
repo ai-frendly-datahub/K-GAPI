@@ -410,6 +410,68 @@ body {
   flex-shrink: 0;
 }
 
+/* ===== Deep Analysis Widgets ===== */
+.scorecard-item {
+  text-align: center;
+  padding: 1.25rem;
+}
+.scorecard-item__pct {
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+.scorecard-item__pct--good { color: var(--color-grade-a); }
+.scorecard-item__pct--bad { color: var(--color-grade-e); }
+.scorecard-item__count {
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+  margin-top: 0.25rem;
+}
+.scorecard-item__label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-top: 0.5rem;
+}
+.comparator-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+.comparator-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  box-shadow: var(--shadow-sm);
+}
+.comparator-card__name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--color-primary-light);
+}
+.comparator-section {
+  margin-bottom: 0.75rem;
+}
+.comparator-section__title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--color-text-secondary);
+  margin-bottom: 0.4rem;
+}
+.comparator-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.2rem 0;
+  font-size: 0.8rem;
+}
+.comparator-row__label { color: var(--color-text-secondary); }
+.comparator-row__value { font-weight: 500; }
+
 /* ===== Responsive ===== */
 @media (max-width: 768px) {
   .stats-grid { grid-template-columns: repeat(2, 1fr); }
@@ -471,11 +533,19 @@ body {
 <!-- ===== HEADER ===== -->
 <header class="header">
   <div class="container header__inner">
-    <div>
-      <div class="header__title">대한민국 공공 Open API 현황 종합 분석</div>
-      <div class="header__subtitle">Korean Public Open API Comprehensive Analysis Dashboard</div>
+    <div style="display:flex;align-items:center;gap:0.75rem;">
+      <div>
+        <div class="header__title">대한민국 공공 Open API 현황 종합 분석</div>
+        <div class="header__subtitle">Korean Public Open API Comprehensive Analysis Dashboard</div>
+      </div>
     </div>
-    <div class="header__date">2026-04-02 기준</div>
+    <div style="display:flex;align-items:center;gap:1rem;">
+      <a href="https://github.com/hollobit/K-GAPI" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:0.4rem;text-decoration:none;color:var(--color-text);background:#f1f3f4;padding:0.4rem 0.75rem;border-radius:6px;font-size:0.8rem;font-weight:600;transition:background 0.15s;" onmouseover="this.style.background='#e0e3e7'" onmouseout="this.style.background='#f1f3f4'">
+        <svg height="18" width="18" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        GitHub
+      </a>
+      <div class="header__date">2026-04-02 기준</div>
+    </div>
   </div>
 </header>
 
@@ -488,6 +558,7 @@ body {
     <button class="nav-tab" role="tab" data-section="comparison">비교 분석</button>
     <button class="nav-tab" role="tab" data-section="calculator">ID 계산기</button>
     <button class="nav-tab" role="tab" data-section="findings">핵심 발견</button>
+    <button class="nav-tab" role="tab" data-section="deep-analysis">심층 분석</button>
   </div>
 </nav>
 
@@ -528,6 +599,77 @@ body {
       <div class="card chart-card">
         <div class="chart-card__title">포털 유형 분포</div>
         <div id="chart-type"></div>
+      </div>
+    </div>
+
+    <!-- 등급 평가 기준 설명 -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:1.5rem;">
+      <div class="card" style="padding:1.25rem;">
+        <div style="font-weight:700;font-size:0.95rem;margin-bottom:0.75rem;color:var(--color-primary);">사용자 편의성 등급 기준</div>
+        <p style="font-size:0.8rem;color:var(--color-text-secondary);margin-bottom:0.75rem;">
+          API가 공급자(기관) 관점이 아닌 <strong>사용자(개발자) 관점</strong>에서 얼마나 쉽게 접근·활용할 수 있는지를 7개 항목으로 평가합니다.
+        </p>
+        <table style="width:100%;font-size:0.75rem;border-collapse:collapse;">
+          <thead>
+            <tr style="border-bottom:2px solid var(--color-border);">
+              <th style="text-align:left;padding:0.3rem 0.5rem;color:var(--color-text-secondary);">항목</th>
+              <th style="text-align:center;padding:0.3rem;color:var(--color-grade-e);">0점</th>
+              <th style="text-align:center;padding:0.3rem;color:var(--color-grade-c);">1점</th>
+              <th style="text-align:center;padding:0.3rem;color:var(--color-grade-a);">2점</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid var(--color-border-light);"><td style="padding:0.3rem 0.5rem;">가입 용이성</td><td style="text-align:center;padding:0.3rem;">공동인증서/기관심사</td><td style="text-align:center;padding:0.3rem;">휴대폰 본인인증</td><td style="text-align:center;padding:0.3rem;">이메일/소셜</td></tr>
+            <tr style="border-bottom:1px solid var(--color-border-light);"><td style="padding:0.3rem 0.5rem;">승인 속도</td><td style="text-align:center;padding:0.3rem;">3일+ 수동</td><td style="text-align:center;padding:0.3rem;">1일 이내</td><td style="text-align:center;padding:0.3rem;">즉시 자동</td></tr>
+            <tr style="border-bottom:1px solid var(--color-border-light);"><td style="padding:0.3rem 0.5rem;">데이터 포맷</td><td style="text-align:center;padding:0.3rem;">XML만</td><td style="text-align:center;padding:0.3rem;">XML+JSON</td><td style="text-align:center;padding:0.3rem;">JSON 기본</td></tr>
+            <tr style="border-bottom:1px solid var(--color-border-light);"><td style="padding:0.3rem 0.5rem;">문서 품질</td><td style="text-align:center;padding:0.3rem;">부실/없음</td><td style="text-align:center;padding:0.3rem;">기본 설명</td><td style="text-align:center;padding:0.3rem;">Swagger/테스트콘솔</td></tr>
+            <tr style="border-bottom:1px solid var(--color-border-light);"><td style="padding:0.3rem 0.5rem;">호출 한도</td><td style="text-align:center;padding:0.3rem;">일 100회 이하</td><td style="text-align:center;padding:0.3rem;">일 1,000회</td><td style="text-align:center;padding:0.3rem;">일 10,000회+</td></tr>
+            <tr style="border-bottom:1px solid var(--color-border-light);"><td style="padding:0.3rem 0.5rem;">에러 처리</td><td style="text-align:center;padding:0.3rem;">코드 불명확</td><td style="text-align:center;padding:0.3rem;">코드 있으나 부족</td><td style="text-align:center;padding:0.3rem;">코드+메시지+해결방안</td></tr>
+            <tr><td style="padding:0.3rem 0.5rem;">SDK/샘플코드</td><td style="text-align:center;padding:0.3rem;">없음</td><td style="text-align:center;padding:0.3rem;">1개 언어</td><td style="text-align:center;padding:0.3rem;">다국어 SDK</td></tr>
+          </tbody>
+        </table>
+        <div style="margin-top:0.75rem;font-size:0.75rem;color:var(--color-text-secondary);">
+          <strong>등급:</strong>
+          <span class="grade grade--A">A</span> 12~14점
+          <span class="grade grade--B">B</span> 9~11점
+          <span class="grade grade--C">C</span> 6~8점
+          <span class="grade grade--D">D</span> 3~5점
+          <span class="grade grade--E">E</span> 0~2점
+        </div>
+      </div>
+
+      <div class="card" style="padding:1.25rem;">
+        <div style="font-weight:700;font-size:0.95rem;margin-bottom:0.75rem;color:var(--color-primary);">AI 적합성 등급 기준</div>
+        <p style="font-size:0.8rem;color:var(--color-text-secondary);margin-bottom:0.75rem;">
+          AI/LLM agent가 API를 <strong>자동으로 발견·호출·에러처리</strong>할 수 있는지를 7개 항목으로 평가합니다.
+        </p>
+        <table style="width:100%;font-size:0.75rem;border-collapse:collapse;">
+          <thead>
+            <tr style="border-bottom:2px solid var(--color-border);">
+              <th style="text-align:left;padding:0.3rem 0.5rem;color:var(--color-text-secondary);">항목</th>
+              <th style="text-align:center;padding:0.3rem;color:var(--color-grade-e);">0점</th>
+              <th style="text-align:center;padding:0.3rem;color:var(--color-grade-c);">1점</th>
+              <th style="text-align:center;padding:0.3rem;color:var(--color-grade-a);">2점</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid var(--color-border-light);"><td style="padding:0.3rem 0.5rem;">기계 판독 스키마</td><td style="text-align:center;padding:0.3rem;">문서 없음/HWP</td><td style="text-align:center;padding:0.3rem;">HTML 문서</td><td style="text-align:center;padding:0.3rem;">OpenAPI 3.0 JSON</td></tr>
+            <tr style="border-bottom:1px solid var(--color-border-light);"><td style="padding:0.3rem 0.5rem;">HTTP 의미론</td><td style="text-align:center;padding:0.3rem;">항상 200 반환</td><td style="text-align:center;padding:0.3rem;">일부 상태코드</td><td style="text-align:center;padding:0.3rem;">표준 (401/404/429)</td></tr>
+            <tr style="border-bottom:1px solid var(--color-border-light);"><td style="padding:0.3rem 0.5rem;">JSON 네이티브</td><td style="text-align:center;padding:0.3rem;">XML only</td><td style="text-align:center;padding:0.3rem;">JSON 선택 가능</td><td style="text-align:center;padding:0.3rem;">JSON 기본</td></tr>
+            <tr style="border-bottom:1px solid var(--color-border-light);"><td style="padding:0.3rem 0.5rem;">에러 자기설명성</td><td style="text-align:center;padding:0.3rem;">코드만/오타</td><td style="text-align:center;padding:0.3rem;">코드+메시지</td><td style="text-align:center;padding:0.3rem;">RFC 7807</td></tr>
+            <tr style="border-bottom:1px solid var(--color-border-light);"><td style="padding:0.3rem 0.5rem;">프로그래매틱 인증</td><td style="text-align:center;padding:0.3rem;">공동인증서/GUI</td><td style="text-align:center;padding:0.3rem;">API Key (URL노출)</td><td style="text-align:center;padding:0.3rem;">OAuth 2.0+Header</td></tr>
+            <tr style="border-bottom:1px solid var(--color-border-light);"><td style="padding:0.3rem 0.5rem;">Rate Limit 투명성</td><td style="text-align:center;padding:0.3rem;">정보 없음</td><td style="text-align:center;padding:0.3rem;">문서에만 기재</td><td style="text-align:center;padding:0.3rem;">X-RateLimit 헤더</td></tr>
+            <tr><td style="padding:0.3rem 0.5rem;">CORS/HTTPS</td><td style="text-align:center;padding:0.3rem;">미지원</td><td style="text-align:center;padding:0.3rem;">일부 지원</td><td style="text-align:center;padding:0.3rem;">완전 지원</td></tr>
+          </tbody>
+        </table>
+        <div style="margin-top:0.75rem;font-size:0.75rem;color:var(--color-text-secondary);">
+          <strong>등급:</strong>
+          <span class="grade grade--A">A</span> 12~14점
+          <span class="grade grade--B">B</span> 9~11점
+          <span class="grade grade--C">C</span> 6~8점
+          <span class="grade grade--D">D</span> 3~5점
+          <span class="grade grade--E">E</span> 0~2점
+        </div>
       </div>
     </div>
   </section>
@@ -654,7 +796,7 @@ body {
       <div class="card finding-card">
         <div class="finding-card__title">구조적 문제점</div>
         <ul class="finding-card__list">
-          <li data-icon="!">60개 이상 포털 파편화 -- 30~40개 별도 ID 필요</li>
+          <li data-icon="!">173개 포털 파편화 -- 전체 커버 시 131개 ID 필요</li>
           <li data-icon="!">2010년대 XML/SOAP 설계에서 근본 개선 없음</li>
           <li data-icon="!">모든 포털이 에러 시에도 HTTP 200 반환</li>
           <li data-icon="!">serviceKey 이중 인코딩 문제 (블로그 수백 건)</li>
@@ -702,11 +844,63 @@ body {
     </div>
   </section>
 
+  <!-- Section 7: Deep Analysis -->
+  <section id="section-deep-analysis" class="section">
+    <h2 class="section__title">심층 분석</h2>
+
+    <!-- Row 1: Donut + Radar -->
+    <div class="charts-grid" style="margin-bottom:1.5rem;">
+      <div class="card chart-card">
+        <div class="chart-card__title">data.go.kr 패턴 분포</div>
+        <div id="deep-pattern-donut"></div>
+      </div>
+      <div class="card chart-card">
+        <div class="chart-card__title">사용자 편의성 7항목 레이더차트</div>
+        <div id="deep-uf-radar"></div>
+      </div>
+    </div>
+
+    <!-- Row 2: Heatmap + Format -->
+    <div class="charts-grid" style="margin-bottom:1.5rem;">
+      <div class="card chart-card">
+        <div class="chart-card__title">AI 적합성 7항목 히트맵</div>
+        <div id="deep-ai-heatmap"></div>
+      </div>
+      <div class="card chart-card">
+        <div class="chart-card__title">기본 응답 포맷 분포</div>
+        <div id="deep-format-dist"></div>
+      </div>
+    </div>
+
+    <!-- Row 3: Tech Scorecard -->
+    <div class="card" style="margin-bottom:1.5rem;">
+      <div class="chart-card__title">기술 지원 현황 스코어카드</div>
+      <div class="stats-grid" id="deep-tech-scorecard"></div>
+    </div>
+
+    <!-- Row 4: Top 20 API count -->
+    <div class="card" style="margin-bottom:1.5rem;">
+      <div class="chart-card__title">API 수 Top 20 랭킹</div>
+      <div id="deep-api-top20"></div>
+    </div>
+
+    <!-- Row 5: Portal Comparator -->
+    <div class="card">
+      <div class="chart-card__title">포털 비교기</div>
+      <div style="display:flex;flex-wrap:wrap;gap:0.75rem;margin-bottom:1rem;">
+        <select class="filter-select" id="comparator-select-1" aria-label="비교 포털 1"><option value="">-- 포털 선택 1 --</option></select>
+        <select class="filter-select" id="comparator-select-2" aria-label="비교 포털 2"><option value="">-- 포털 선택 2 --</option></select>
+        <select class="filter-select" id="comparator-select-3" aria-label="비교 포털 3"><option value="">-- 포털 선택 3 (선택) --</option></select>
+      </div>
+      <div id="deep-comparator-result"></div>
+    </div>
+  </section>
+
 </main>
 
 <footer class="footer">
   <p>본 대시보드는 2026년 4월 기준으로 작성되었으며, 각 포털의 정책은 수시로 변경될 수 있습니다.</p>
-  <p style="margin-top:0.25rem;">데이터 출처: 대한민국 공공 Open API 현황 종합 보고서</p>
+  <p style="margin-top:0.25rem;">데이터 출처: 대한민국 공공 Open API 현황 종합 보고서 | <a href="https://github.com/hollobit/K-GAPI" target="_blank" rel="noopener" style="color:var(--color-primary);">GitHub</a></p>
 </footer>
 
 <script>
@@ -973,13 +1167,16 @@ function computeStats(data) {
    =================================================================== */
 function renderStats(stats) {
   var grid = document.getElementById('stats-grid');
+  var separateIds = PORTALS_DATA.filter(function(p) { return p.signup.separate_id; }).length;
+  var totalIds = 1 + separateIds;
+  var patternA = PORTALS_DATA.filter(function(p) { return p.data_go_kr.pattern === 'A_gateway'; }).length;
   var cards = [
-    { value: stats.portalCount + '개', label: '분석 대상 포털', sub: '' },
+    { value: stats.portalCount + '개', label: '분석 대상 포털', sub: '19개 분야' },
     { value: '~' + stats.totalApis.toLocaleString(), label: '추정 총 API 수', sub: '' },
     { value: stats.avgUfGrade + ' (' + stats.avgUfScore + '/14)', label: '평균 사용자 편의성', sub: '', cls: stats.avgUfGrade === 'D' || stats.avgUfGrade === 'E' ? 'stat-card__value--warning' : '' },
-    { value: stats.avgAiGrade + ' (' + stats.avgAiScore + '/14)', label: '평균 AI 적합성', sub: '', cls: 'stat-card__value--warning' },
-    { value: '30~40개', label: '전체 커버 시 필요 ID 수', sub: '', cls: 'stat-card__value--neutral' },
-    { value: '0개', label: 'ID 없이 사용 가능한 API', sub: '모든 포털이 가입 필수', cls: 'stat-card__value--warning' }
+    { value: stats.avgAiGrade + ' (' + stats.avgAiScore + '/14)', label: '평균 AI 적합성', sub: 'OECD 1위 vs 기술품질 2.0/10', cls: 'stat-card__value--warning' },
+    { value: totalIds + '개', label: '전체 API를 사용하려면 필요 ID 수', sub: 'data.go.kr 1개 + 별도 ' + separateIds + '개', cls: 'stat-card__value--warning' },
+    { value: patternA + '개 (' + Math.round(patternA / stats.portalCount * 100) + '%)', label: 'data.go.kr만으로 동작', sub: '나머지 ' + (stats.portalCount - patternA) + '개는 별도 가입 필요', cls: 'stat-card__value--neutral' }
   ];
 
   grid.innerHTML = cards.map(function(c) {
@@ -1391,28 +1588,28 @@ function renderComparison(data) {
    SECTION 5: ID CALCULATOR
    =================================================================== */
 var CALC_CATEGORIES = [
-  { key: 'central', label: '중앙정부 통합 데이터 (기상, 환경, 교통 등)', portals: ['data-go-kr'], desc: 'data.go.kr 1개로 70% 커버' },
-  { key: 'seoul', label: '서울시 데이터', portals: ['seoul'], desc: '서울 열린데이터광장 별도 가입' },
-  { key: 'gyeonggi', label: '경기도 데이터', portals: ['gyeonggi'], desc: '경기데이터드림 별도 가입' },
-  { key: 'local_all', label: '전국 지자체 데이터 (17개 시/도)', portals: ['seoul','gyeonggi','busan','jeju','daegu','incheon','gwangju','daejeon','ulsan','gangwon','chungnam','gyeongbuk','gyeongnam','chungbuk','jeonbuk','jeonnam','sejong'], desc: '17개 포털 각각 별도 가입 필요' },
-  { key: 'finance', label: '기업 공시/재무 데이터', portals: ['opendart'], desc: 'DART (금감원) 별도 가입' },
-  { key: 'economy', label: '경제 통계 (금리, 환율, GDP)', portals: ['ecos'], desc: 'ECOS (한국은행) 별도 가입' },
-  { key: 'stock', label: '주식/거래소 데이터', portals: ['krx'], desc: 'KRX 별도 가입 (수동승인)' },
-  { key: 'statistics', label: '국가 통계 (인구, 산업)', portals: ['kosis'], desc: 'KOSIS (통계청) 별도 가입' },
-  { key: 'law', label: '법률/판례/법령 데이터', portals: ['open-assembly','open-law','scourt','iros'], desc: '국회, 법제처, 대법원(2개) 각각 별도' },
-  { key: 'realestate', label: '부동산 데이터 (실거래가+시세)', portals: ['data-go-kr','reb'], desc: 'data.go.kr(실거래가) + 한국부동산원(시세)' },
-  { key: 'weather', label: '기상 데이터 (상세)', portals: ['data-go-kr','kma'], desc: 'data.go.kr(기본) + 기상청API허브(상세)' },
-  { key: 'traffic', label: '교통 데이터 (고속도로+철도)', portals: ['data-go-kr','ex','kric'], desc: 'data.go.kr + 도로공사 + KRIC(철도)' },
-  { key: 'health', label: '보건/의료 데이터', portals: ['data-go-kr','hira','nhis'], desc: 'data.go.kr + 심사평가원 + 건보공단' },
-  { key: 'tourism', label: '관광 데이터', portals: ['tourapi'], desc: 'TourAPI (관광공사) 별도 가입' },
-  { key: 'employment', label: '고용/채용 데이터', portals: ['worknet','hrdkorea'], desc: '워크넷 + 산업인력공단 별도 가입' },
-  { key: 'education', label: '교육 데이터', portals: ['neis','riss'], desc: 'NEIS(소셜로그인) + RISS 별도 가입' },
-  { key: 'food', label: '식품/위생 데이터', portals: ['foodsafety'], desc: '식품안전나라 별도 가입' },
-  { key: 'patent', label: '특허/지식재산 데이터', portals: ['kipris'], desc: 'KIPRIS Plus 별도 가입' },
-  { key: 'trade', label: '무역/관세 데이터', portals: ['unipass'], desc: '유니패스 (관세청) 별도 가입' },
-  { key: 'news', label: '뉴스 빅데이터', portals: ['bigkinds'], desc: '빅카인즈 (언론재단) 별도 가입' },
-  { key: 'ai', label: 'AI 학습 데이터셋', portals: ['aihub'], desc: 'AI Hub 별도 가입' },
-  { key: 'library', label: '도서관/서지 데이터', portals: ['data4library'], desc: '도서관 정보나루 별도 가입' }
+  { key: 'central', label: '중앙정부 통합 데이터', portals: ['data-go-kr'], desc: 'data.go.kr — Pattern A(게이트웨이) 31개 포털 커버. 단 실제는 전체의 18%' },
+  { key: 'local_all', label: '전국 17개 시/도 지자체', portals: ['seoul','gyeonggi','busan','jeju','daegu','incheon','gwangju','daejeon','ulsan','gangwon','chungnam','gyeongbuk','gyeongnam','chungbuk','jeonbuk','jeonnam','sejong'], desc: '17개 포털 각각 별도 가입 필요' },
+  { key: 'finance_all', label: '금융/증권/보험 종합', portals: ['opendart','ecos','krx','kftc','seibro','finlife','kofia','bigin','fsc-data'], desc: 'DART+ECOS+KRX+SEIBro+FinLife+KOFIA+BIGIN+금융위 — 최대 9개 ID' },
+  { key: 'law_all', label: '법률/사법 종합', portals: ['open-assembly','nanet','nanet-law','open-law','world-moleg','klri','scourt','iros','ccjs'], desc: '국회(3)+법제처(2)+대법원(2)+CCJS+법제연구원 — 9개 ID' },
+  { key: 'traffic_all', label: '교통/물류 종합', portals: ['data-go-kr','ex','kric','its','tago','komsa','iiac','kac','stcis','korail-api','koroad','kotsa'], desc: 'ITS+TAGO+도로공사+KRIC+코레일+인천공항+공항공사+해양교통+교통카드 등' },
+  { key: 'health_all', label: '보건/의료 종합', portals: ['data-go-kr','hira','nhis','kdca-infection','nedrug','mfds-data','health-kdca','cancer'], desc: '심사평가원+건보+질병관리청+의약품안전나라+식의약+암센터 등' },
+  { key: 'env_energy', label: '환경/에너지 종합', portals: ['kma','kea','kpx','kepco','khnp','eiass','kwater','gims','vadahub','allbaro','kdhc'], desc: '기상청+에너지공단+전력거래소+KEPCO+한수원+EIASS+K-water+지하수+VADAHUB 등' },
+  { key: 'agri_all', label: '농수산/산림 종합', portals: ['nongsaro','kamis','mafra','atfis','nifs','mtrace','smartfarm','bigdata-forest','kadx','forest-detail'], desc: '농사로+KAMIS+농림부+FIS+수산과학원+축산이력+스마트팜+산림빅데이터+KADX 등' },
+  { key: 'edu_all', label: '교육/학술 종합', portals: ['neis','riss','kci','hrdkorea','careernet','schoolinfo','academyinfo','kmooc','eduinfo'], desc: 'NEIS+RISS+KCI+산업인력공단(69종)+커리어넷+학교알리미+대학알리미+K-MOOC 등' },
+  { key: 'admin_all', label: '행정/민원/외교/국방', portals: ['gov-kr-openapi','mofa','mnd','mma','mpva','localdata','lofin','alio','fairdata','unikorea','koica','pipc'], desc: '정부24+외교부(65건)+국방부+병무청+보훈부+LOCALDATA+LOFIN+공정위+통일부+KOICA 등' },
+  { key: 'employ_welfare', label: '고용/복지/돌봄', portals: ['worknet','work24','hrdkorea','youthcenter','eis-work','ssis','mogef','childcare','kead'], desc: '고용24+산업인력공단+온통청년+사회보장정보원+여성가족부+어린이집+장애인고용 등' },
+  { key: 'realestate', label: '부동산/주택', portals: ['data-go-kr','reb','lh','applyhome','hug','hf','eais','nsdi'], desc: 'data.go.kr(실거래가)+부동산원+LH+청약홈+HUG+HF+세움터+공간정보' },
+  { key: 'trade_all', label: '무역/관세/물류', portals: ['unipass','customs-stats','ktnet','kotra','koreaexim','bigdata-sea'], desc: '유니패스(30종)+관세통계+KTNET(JSON)+KOTRA+수출입은행+해양빅데이터' },
+  { key: 'culture_all', label: '문화/관광/체육', portals: ['tourapi','datalab-tour','culture','kofic','kopis','korean-dict','cha','emuseum','aks','i815','kspo','kocca','kcti'], desc: 'TourAPI+데이터랩+문화데이터+영화+공연+국어원+국가유산+박물관+체육진흥 등' },
+  { key: 'science_ict', label: '과학기술/ICT', portals: ['ntis','scienceon','aihub','kci','nkis','zeus','etri-ai','dbpia','kisa','kca','rra','kibo-tb'], desc: 'NTIS+ScienceON+AI Hub+KCI+ZEUS+ETRI AI+DBpia+KISA+방송통신+전파연구 등' },
+  { key: 'patent', label: '특허/지식재산', portals: ['kipris'], desc: 'KIPRIS Plus 80+ API — 별도 가입' },
+  { key: 'spatial', label: '공간정보/지도', portals: ['vworld','sgis','nsdi','ngii'], desc: 'V-World(900종)+SGIS(91종)+국가공간정보+국토정보플랫폼' },
+  { key: 'news', label: '뉴스/미디어', portals: ['bigkinds'], desc: '빅카인즈 54개 매체 뉴스 빅데이터' },
+  { key: 'food', label: '식품/의약품', portals: ['foodsafety','nedrug','mfds-data','atfis'], desc: '식품안전나라(353종)+의약품안전나라+식의약데이터+FIS' },
+  { key: 'procurement', label: '조달/공매', portals: ['g2b','onbid'], desc: '나라장터(G2B)+온비드(KAMCO)' },
+  { key: 'tax', label: '국세/지방세', portals: ['nts','lofin'], desc: '국세청(사업자진위확인)+지방재정365' },
+  { key: 'safety', label: '안전/소방', portals: ['safemap','sofire','kosha','kfi'], desc: '생활안전지도+소방청(8종)+산업안전+소방산업기술원(9종)' }
 ];
 
 function renderCalculator(data) {
@@ -1513,6 +1710,403 @@ function renderGlobalComparison() {
 }
 
 /* ===================================================================
+   SECTION 7: DEEP ANALYSIS WIDGETS
+   =================================================================== */
+
+/* Widget 1: data.go.kr Pattern Donut */
+function renderPatternDonut(data) {
+  var container = document.getElementById('deep-pattern-donut');
+  var counts = { A_gateway: 0, B_index_only: 0, C_both_differ: 0, not_listed: 0 };
+  data.forEach(function(p) {
+    var pat = (p.data_go_kr && p.data_go_kr.pattern) ? p.data_go_kr.pattern : 'not_listed';
+    if (counts[pat] !== undefined) { counts[pat]++; } else { counts.not_listed++; }
+  });
+
+  var entries = [
+    { key: 'A_gateway', label: 'A: 게이트웨이', color: '#0d904f' },
+    { key: 'B_index_only', label: 'B: 인덱스만', color: '#1a73e8' },
+    { key: 'C_both_differ', label: 'C: 양쪽 차이', color: '#e37400' },
+    { key: 'not_listed', label: '미등록', color: '#d93025' }
+  ];
+  var total = data.length || 1;
+  var cx = 110, cy = 90, r = 70, inner = 40;
+  var svg = '<svg viewBox="0 0 260 200" role="img" aria-label="data.go.kr 패턴 분포">';
+  var angle = -Math.PI / 2;
+
+  entries.forEach(function(e) {
+    var val = counts[e.key] || 0;
+    if (val === 0) return;
+    var slice = (val / total) * Math.PI * 2;
+    var x1 = cx + r * Math.cos(angle), y1 = cy + r * Math.sin(angle);
+    var x1i = cx + inner * Math.cos(angle), y1i = cy + inner * Math.sin(angle);
+    var x2 = cx + r * Math.cos(angle + slice), y2 = cy + r * Math.sin(angle + slice);
+    var x2i = cx + inner * Math.cos(angle + slice), y2i = cy + inner * Math.sin(angle + slice);
+    var large = slice > Math.PI ? 1 : 0;
+    svg += '<path d="M' + x1 + ',' + y1 + ' A' + r + ',' + r + ' 0 ' + large + ',1 ' + x2 + ',' + y2 +
+           ' L' + x2i + ',' + y2i + ' A' + inner + ',' + inner + ' 0 ' + large + ',0 ' + x1i + ',' + y1i + ' Z" fill="' + e.color + '" />';
+    // percentage label
+    var midAngle = angle + slice / 2;
+    var labelR = (r + inner) / 2;
+    var lx = cx + labelR * Math.cos(midAngle), ly = cy + labelR * Math.sin(midAngle);
+    var pct = Math.round(val / total * 100);
+    if (pct >= 5) {
+      svg += '<text x="' + lx + '" y="' + (ly + 4) + '" text-anchor="middle" font-size="10" font-weight="600" fill="#fff" font-family="var(--font)">' + pct + '%</text>';
+    }
+    angle += slice;
+  });
+
+  svg += '<text x="' + cx + '" y="' + (cy - 4) + '" text-anchor="middle" font-size="20" font-weight="800" fill="var(--color-text)" font-family="var(--font)">' + total + '</text>';
+  svg += '<text x="' + cx + '" y="' + (cy + 12) + '" text-anchor="middle" font-size="10" fill="var(--color-text-secondary)" font-family="var(--font)">포털</text>';
+  svg += '</svg>';
+
+  var legend = '<div class="donut-legend">';
+  entries.forEach(function(e) {
+    var val = counts[e.key] || 0;
+    var pct = Math.round(val / total * 100);
+    legend += '<div class="donut-legend__item"><span class="donut-legend__swatch" style="background:' + e.color + '"></span>' + e.label + ' (' + val + ', ' + pct + '%)</div>';
+  });
+  legend += '</div>';
+  container.innerHTML = svg + legend;
+}
+
+/* Widget 2: User Friendliness Radar Chart */
+function renderUfRadar(data) {
+  var container = document.getElementById('deep-uf-radar');
+  var keys = ['signup_ease', 'approval_speed', 'data_format', 'doc_quality', 'rate_limit', 'error_handling', 'sdk_samples'];
+  var labels = ['가입용이성', '승인속도', '데이터포맷', '문서품질', '호출한도', '에러처리', 'SDK/샘플'];
+  var n = keys.length;
+  var maxVal = 2;
+  var total = data.length || 1;
+
+  var avgs = keys.map(function(k) {
+    var sum = data.reduce(function(s, p) { return s + (p.user_friendliness[k] || 0); }, 0);
+    return sum / total;
+  });
+
+  var cx = 150, cy = 120, radius = 90;
+  var svg = '<svg viewBox="0 0 300 260" role="img" aria-label="사용자 편의성 레이더차트">';
+
+  // grid circles
+  [0.25, 0.5, 0.75, 1.0].forEach(function(frac) {
+    var pts = [];
+    for (var i = 0; i < n; i++) {
+      var ang = (Math.PI * 2 * i / n) - Math.PI / 2;
+      pts.push((cx + radius * frac * Math.cos(ang)).toFixed(1) + ',' + (cy + radius * frac * Math.sin(ang)).toFixed(1));
+    }
+    svg += '<polygon points="' + pts.join(' ') + '" fill="none" stroke="var(--color-border-light)" stroke-width="0.5" />';
+  });
+
+  // axis lines
+  for (var i = 0; i < n; i++) {
+    var ang = (Math.PI * 2 * i / n) - Math.PI / 2;
+    var ex = cx + radius * Math.cos(ang), ey = cy + radius * Math.sin(ang);
+    svg += '<line x1="' + cx + '" y1="' + cy + '" x2="' + ex + '" y2="' + ey + '" stroke="var(--color-border)" stroke-width="0.5" />';
+  }
+
+  // find weakest
+  var minIdx = 0;
+  avgs.forEach(function(v, i) { if (v < avgs[minIdx]) minIdx = i; });
+
+  // data polygon
+  var pts = [];
+  for (var i = 0; i < n; i++) {
+    var ang = (Math.PI * 2 * i / n) - Math.PI / 2;
+    var r2 = radius * (avgs[i] / maxVal);
+    pts.push((cx + r2 * Math.cos(ang)).toFixed(1) + ',' + (cy + r2 * Math.sin(ang)).toFixed(1));
+  }
+  svg += '<polygon points="' + pts.join(' ') + '" fill="rgba(26,115,232,0.2)" stroke="var(--color-primary)" stroke-width="2" />';
+
+  // data points + labels
+  for (var i = 0; i < n; i++) {
+    var ang = (Math.PI * 2 * i / n) - Math.PI / 2;
+    var r2 = radius * (avgs[i] / maxVal);
+    var px = cx + r2 * Math.cos(ang), py = cy + r2 * Math.sin(ang);
+    var dotColor = i === minIdx ? 'var(--color-grade-e)' : 'var(--color-primary)';
+    var dotR = i === minIdx ? 5 : 3;
+    svg += '<circle cx="' + px + '" cy="' + py + '" r="' + dotR + '" fill="' + dotColor + '" />';
+
+    // label
+    var lx = cx + (radius + 18) * Math.cos(ang), ly = cy + (radius + 18) * Math.sin(ang);
+    var anchor = Math.abs(Math.cos(ang)) < 0.1 ? 'middle' : Math.cos(ang) > 0 ? 'start' : 'end';
+    var labelColor = i === minIdx ? 'var(--color-grade-e)' : 'var(--color-text-secondary)';
+    var fw = i === minIdx ? '700' : '400';
+    svg += '<text x="' + lx + '" y="' + (ly + 4) + '" text-anchor="' + anchor + '" font-size="10" fill="' + labelColor + '" font-weight="' + fw + '" font-family="var(--font)">' + labels[i] + '</text>';
+    svg += '<text x="' + lx + '" y="' + (ly + 16) + '" text-anchor="' + anchor + '" font-size="9" fill="' + labelColor + '" font-weight="600" font-family="var(--font)">' + avgs[i].toFixed(2) + '</text>';
+  }
+
+  svg += '</svg>';
+  container.innerHTML = svg;
+}
+
+/* Widget 3: AI Readiness Heatmap (Horizontal Bars) */
+function renderAiHeatmap(data) {
+  var container = document.getElementById('deep-ai-heatmap');
+  var keys = ['machine_schema', 'http_semantics', 'json_native', 'error_self_desc', 'programmatic_auth', 'rate_limit_transparency', 'cors_https'];
+  var labels = ['기계판독스키마', 'HTTP의미론', 'JSON네이티브', '에러자기설명', '프로그래매틱인증', 'RateLimit투명성', 'CORS/HTTPS'];
+  var total = data.length || 1;
+
+  var avgs = keys.map(function(k) {
+    var sum = data.reduce(function(s, p) { return s + (p.ai_readiness[k] || 0); }, 0);
+    return sum / total;
+  });
+
+  var barH = 28, gap = 6, labelW = 120, barMaxW = 180, svgW = 380;
+  var svgH = (barH + gap) * keys.length + 10;
+  var svg = '<svg viewBox="0 0 ' + svgW + ' ' + svgH + '" role="img" aria-label="AI 적합성 히트맵" style="width:100%;">';
+
+  avgs.forEach(function(avg, i) {
+    var y = i * (barH + gap) + 5;
+    var pct = avg / 2;
+    var bw = Math.max(pct * barMaxW, 2);
+    // color: 0=deep red, 1=orange, 2=green
+    var r, g, b;
+    if (pct <= 0.5) {
+      r = Math.round(217 + (227 - 217) * (pct * 2));
+      g = Math.round(48 + (116 - 48) * (pct * 2));
+      b = Math.round(37 + (0 - 37) * (pct * 2));
+    } else {
+      r = Math.round(227 + (13 - 227) * ((pct - 0.5) * 2));
+      g = Math.round(116 + (144 - 116) * ((pct - 0.5) * 2));
+      b = Math.round(0 + (79 - 0) * ((pct - 0.5) * 2));
+    }
+    var color = 'rgb(' + r + ',' + g + ',' + b + ')';
+
+    svg += '<text x="' + (labelW - 4) + '" y="' + (y + barH / 2 + 4) + '" text-anchor="end" font-size="11" fill="var(--color-text-secondary)" font-family="var(--font)">' + labels[i] + '</text>';
+    svg += '<rect x="' + labelW + '" y="' + y + '" width="' + barMaxW + '" height="' + barH + '" rx="4" fill="var(--color-border-light)" />';
+    svg += '<rect x="' + labelW + '" y="' + y + '" width="' + bw + '" height="' + barH + '" rx="4" fill="' + color + '" />';
+    svg += '<text x="' + (labelW + barMaxW + 8) + '" y="' + (y + barH / 2 + 4) + '" text-anchor="start" font-size="11" font-weight="600" fill="var(--color-text)" font-family="var(--font)">' + avg.toFixed(2) + '/2</text>';
+  });
+
+  svg += '</svg>';
+  container.innerHTML = svg;
+}
+
+/* Widget 4: Default Format Distribution */
+function renderFormatDist(data) {
+  var container = document.getElementById('deep-format-dist');
+  var counts = { xml: 0, both: 0, json: 0 };
+  data.forEach(function(p) {
+    var fmt = (p.format && p.format.default) ? p.format.default : 'xml';
+    if (counts[fmt] !== undefined) { counts[fmt]++; } else { counts.xml++; }
+  });
+  var total = data.length || 1;
+  var entries = [
+    { key: 'xml', label: 'XML', color: '#d93025' },
+    { key: 'both', label: 'Both', color: '#e37400' },
+    { key: 'json', label: 'JSON', color: '#0d904f' }
+  ];
+
+  var cx = 110, cy = 90, r = 70, inner = 40;
+  var svg = '<svg viewBox="0 0 260 200" role="img" aria-label="기본 응답 포맷 분포">';
+  var angle = -Math.PI / 2;
+
+  entries.forEach(function(e) {
+    var val = counts[e.key] || 0;
+    if (val === 0) return;
+    var slice = (val / total) * Math.PI * 2;
+    var x1 = cx + r * Math.cos(angle), y1 = cy + r * Math.sin(angle);
+    var x1i = cx + inner * Math.cos(angle), y1i = cy + inner * Math.sin(angle);
+    var x2 = cx + r * Math.cos(angle + slice), y2 = cy + r * Math.sin(angle + slice);
+    var x2i = cx + inner * Math.cos(angle + slice), y2i = cy + inner * Math.sin(angle + slice);
+    var large = slice > Math.PI ? 1 : 0;
+    svg += '<path d="M' + x1 + ',' + y1 + ' A' + r + ',' + r + ' 0 ' + large + ',1 ' + x2 + ',' + y2 +
+           ' L' + x2i + ',' + y2i + ' A' + inner + ',' + inner + ' 0 ' + large + ',0 ' + x1i + ',' + y1i + ' Z" fill="' + e.color + '" />';
+    var midAngle = angle + slice / 2;
+    var labelR = (r + inner) / 2;
+    var lx = cx + labelR * Math.cos(midAngle), ly = cy + labelR * Math.sin(midAngle);
+    var pct = Math.round(val / total * 100);
+    if (pct >= 5) {
+      svg += '<text x="' + lx + '" y="' + (ly + 4) + '" text-anchor="middle" font-size="10" font-weight="600" fill="#fff" font-family="var(--font)">' + pct + '%</text>';
+    }
+    angle += slice;
+  });
+
+  svg += '<text x="' + cx + '" y="' + (cy - 4) + '" text-anchor="middle" font-size="20" font-weight="800" fill="var(--color-text)" font-family="var(--font)">' + total + '</text>';
+  svg += '<text x="' + cx + '" y="' + (cy + 12) + '" text-anchor="middle" font-size="10" fill="var(--color-text-secondary)" font-family="var(--font)">포털</text>';
+  svg += '</svg>';
+
+  var legend = '<div class="donut-legend">';
+  entries.forEach(function(e) {
+    var val = counts[e.key] || 0;
+    var pct = Math.round(val / total * 100);
+    legend += '<div class="donut-legend__item"><span class="donut-legend__swatch" style="background:' + e.color + '"></span>' + e.label + ' (' + val + '개, ' + pct + '%)</div>';
+  });
+  legend += '</div>';
+  container.innerHTML = svg + legend;
+}
+
+/* Widget 5: Tech Support Scorecard */
+function renderTechScorecard(data) {
+  var container = document.getElementById('deep-tech-scorecard');
+  var total = data.length || 1;
+  var metrics = [
+    { label: 'CORS 지원', count: data.filter(function(p) { return p.technical && p.technical.cors; }).length, threshold: 50 },
+    { label: 'HTTPS 지원', count: data.filter(function(p) { return p.technical && p.technical.https; }).length, threshold: 50 },
+    { label: 'OpenAPI 스펙', count: data.filter(function(p) { return p.technical && p.technical.openapi_spec; }).length, threshold: 50 },
+    { label: '샌드박스', count: data.filter(function(p) { return p.technical && p.technical.sandbox; }).length, threshold: 50 }
+  ];
+
+  container.innerHTML = metrics.map(function(m) {
+    var pct = Math.round(m.count / total * 100);
+    var cls = pct >= m.threshold ? 'scorecard-item__pct--good' : 'scorecard-item__pct--bad';
+    return '<div class="card scorecard-item">' +
+      '<div class="scorecard-item__pct ' + cls + '">' + pct + '%</div>' +
+      '<div class="scorecard-item__count">' + m.count + ' / ' + total + '개</div>' +
+      '<div class="scorecard-item__label">' + m.label + '</div>' +
+      '</div>';
+  }).join('');
+}
+
+/* Widget 6: API Count Top 20 */
+function renderApiTop20(data) {
+  var container = document.getElementById('deep-api-top20');
+  var sorted = data.slice().sort(function(a, b) {
+    return (b.api_count_estimate || 0) - (a.api_count_estimate || 0);
+  }).slice(0, 20);
+
+  var maxCount = sorted.length > 0 ? (sorted[0].api_count_estimate || 1) : 1;
+  var barH = 24, gap = 4, labelW = 160, barMaxW = 220, valW = 60;
+  var svgW = labelW + barMaxW + valW + 10;
+  var svgH = (barH + gap) * sorted.length + 10;
+
+  var typeColorMap = {};
+  var typeKeys = Object.keys(PORTAL_TYPE_LABELS);
+  typeKeys.forEach(function(k, i) {
+    typeColorMap[k] = PORTAL_TYPE_COLORS[i % PORTAL_TYPE_COLORS.length];
+  });
+
+  var svg = '<svg viewBox="0 0 ' + svgW + ' ' + svgH + '" role="img" aria-label="API 수 Top 20" style="width:100%;">';
+
+  sorted.forEach(function(p, i) {
+    var y = i * (barH + gap) + 5;
+    var count = p.api_count_estimate || 0;
+    var bw = Math.max((count / maxCount) * barMaxW, 2);
+    var color = typeColorMap[p.portal_type] || '#78909c';
+    var name = p.name.length > 18 ? p.name.substring(0, 18) + '...' : p.name;
+
+    svg += '<text x="' + (labelW - 4) + '" y="' + (y + barH / 2 + 4) + '" text-anchor="end" font-size="11" fill="var(--color-text)" font-family="var(--font)">' + escapeHtml(name) + '</text>';
+    svg += '<rect x="' + labelW + '" y="' + y + '" width="' + bw + '" height="' + barH + '" rx="3" fill="' + color + '" opacity="0.85" />';
+    svg += '<text x="' + (labelW + bw + 6) + '" y="' + (y + barH / 2 + 4) + '" text-anchor="start" font-size="10" font-weight="600" fill="var(--color-text)" font-family="var(--font)">' + count.toLocaleString() + '</text>';
+  });
+
+  svg += '</svg>';
+
+  // legend for portal types used
+  var usedTypes = {};
+  sorted.forEach(function(p) { usedTypes[p.portal_type] = true; });
+  var legend = '<div class="donut-legend" style="margin-top:0.5rem;">';
+  Object.keys(usedTypes).forEach(function(t) {
+    legend += '<div class="donut-legend__item"><span class="donut-legend__swatch" style="background:' + (typeColorMap[t] || '#78909c') + '"></span>' + (PORTAL_TYPE_LABELS[t] || t) + '</div>';
+  });
+  legend += '</div>';
+
+  container.innerHTML = svg + legend;
+}
+
+/* Widget 7: Portal Comparator */
+function initComparator(data) {
+  var selects = [
+    document.getElementById('comparator-select-1'),
+    document.getElementById('comparator-select-2'),
+    document.getElementById('comparator-select-3')
+  ];
+
+  var sorted = data.slice().sort(function(a, b) { return a.name.localeCompare(b.name); });
+  sorted.forEach(function(p) {
+    selects.forEach(function(sel) {
+      var opt = document.createElement('option');
+      opt.value = p.id;
+      opt.textContent = p.name;
+      sel.appendChild(opt);
+    });
+  });
+
+  function renderComparatorResult() {
+    var resultDiv = document.getElementById('deep-comparator-result');
+    var selected = selects.map(function(sel) { return sel.value; }).filter(function(v) { return v; });
+    if (selected.length < 2) {
+      resultDiv.innerHTML = '<p style="text-align:center;color:var(--color-text-secondary);font-size:0.85rem;padding:1rem;">2개 이상의 포털을 선택해 주세요.</p>';
+      return;
+    }
+
+    var portals = selected.map(function(id) {
+      return data.find(function(p) { return p.id === id; });
+    }).filter(Boolean);
+
+    var ufKeys = ['signup_ease', 'approval_speed', 'data_format', 'doc_quality', 'rate_limit', 'error_handling', 'sdk_samples'];
+    var ufLabels = ['가입용이성', '승인속도', '데이터포맷', '문서품질', '호출한도', '에러처리', 'SDK/샘플'];
+    var aiKeys = ['machine_schema', 'http_semantics', 'json_native', 'error_self_desc', 'programmatic_auth', 'rate_limit_transparency', 'cors_https'];
+    var aiLabels = ['기계판독스키마', 'HTTP의미론', 'JSON네이티브', '에러자기설명', '프로그래매틱인증', 'RateLimit투명성', 'CORS/HTTPS'];
+
+    var patternLabels = {
+      A_gateway: 'A: 게이트웨이',
+      B_index_only: 'B: 인덱스만',
+      C_both_differ: 'C: 양쪽 차이',
+      not_listed: '미등록'
+    };
+
+    var html = '<div class="comparator-grid">';
+    portals.forEach(function(p) {
+      html += '<div class="comparator-card">';
+      html += '<div class="comparator-card__name">' + escapeHtml(p.name) + '</div>';
+
+      // Basic info
+      html += '<div class="comparator-section"><div class="comparator-section__title">기본정보</div>';
+      html += '<div class="comparator-row"><span class="comparator-row__label">URL</span><a href="' + escapeHtml(p.url) + '" target="_blank" rel="noopener" class="portal-link" style="font-size:0.75rem;">' + escapeHtml(p.url) + '</a></div>';
+      html += '<div class="comparator-row"><span class="comparator-row__label">기관</span><span class="comparator-row__value">' + escapeHtml(p.institution) + '</span></div>';
+      html += '<div class="comparator-row"><span class="comparator-row__label">카테고리</span><span class="comparator-row__value">' + (CATEGORY_LABELS[p.category] || p.category) + '</span></div>';
+      html += '<div class="comparator-row"><span class="comparator-row__label">API 수</span><span class="comparator-row__value">' + (p.api_count_estimate || '-') + '</span></div>';
+      html += '</div>';
+
+      // Signup/Approval
+      html += '<div class="comparator-section"><div class="comparator-section__title">가입/승인</div>';
+      html += '<div class="comparator-row"><span class="comparator-row__label">방법</span><span class="comparator-row__value">' + (SIGNUP_METHOD_LABELS[p.signup.method] || p.signup.method) + '</span></div>';
+      html += '<div class="comparator-row"><span class="comparator-row__label">난이도</span><span class="comparator-row__value">' + ({ low: '쉬움', medium: '보통', high: '어려움' }[p.signup.difficulty] || p.signup.difficulty) + '</span></div>';
+      html += '<div class="comparator-row"><span class="comparator-row__label">승인방식</span><span class="comparator-row__value">' + (APPROVAL_LABELS[p.approval.method] || p.approval.method) + '</span></div>';
+      html += '<div class="comparator-row"><span class="comparator-row__label">소요일</span><span class="comparator-row__value">' + (p.approval.avg_days === 0 ? '즉시' : p.approval.avg_days + '일') + '</span></div>';
+      html += '</div>';
+
+      // Technical
+      html += '<div class="comparator-section"><div class="comparator-section__title">기술사양</div>';
+      html += '<div class="comparator-row"><span class="comparator-row__label">포맷</span><span class="comparator-row__value">' + (p.format.default || '-') + '</span></div>';
+      html += '<div class="comparator-row"><span class="comparator-row__label">인증</span><span class="comparator-row__value">' + (AUTH_TYPE_LABELS[p.auth.type] || p.auth.type) + '</span></div>';
+      html += '<div class="comparator-row"><span class="comparator-row__label">호출한도</span><span class="comparator-row__value">' + (p.rate_limit.daily ? p.rate_limit.daily.toLocaleString() + '/일' : '-') + '</span></div>';
+      html += '<div class="comparator-row"><span class="comparator-row__label">CORS</span>' + boolTag(p.technical.cors) + '</div>';
+      html += '<div class="comparator-row"><span class="comparator-row__label">OpenAPI</span>' + boolTag(p.technical.openapi_spec) + '</div>';
+      html += '</div>';
+
+      // Grades
+      html += '<div class="comparator-section"><div class="comparator-section__title">사용자 편의성 (' + p.user_friendliness.total + '/14 ' + gradeHtml(p.user_friendliness.grade) + ')</div>';
+      ufKeys.forEach(function(k, idx) {
+        html += '<div class="comparator-row"><span class="comparator-row__label">' + ufLabels[idx] + '</span><span class="comparator-row__value">' + p.user_friendliness[k] + '/2</span></div>';
+      });
+      html += '</div>';
+
+      html += '<div class="comparator-section"><div class="comparator-section__title">AI 적합성 (' + p.ai_readiness.total + '/14 ' + gradeHtml(p.ai_readiness.grade) + ')</div>';
+      aiKeys.forEach(function(k, idx) {
+        html += '<div class="comparator-row"><span class="comparator-row__label">' + aiLabels[idx] + '</span><span class="comparator-row__value">' + p.ai_readiness[k] + '/2</span></div>';
+      });
+      html += '</div>';
+
+      // data.go.kr pattern
+      var pat = (p.data_go_kr && p.data_go_kr.pattern) ? p.data_go_kr.pattern : 'not_listed';
+      html += '<div class="comparator-section"><div class="comparator-section__title">data.go.kr 패턴</div>';
+      html += '<div class="comparator-row"><span class="comparator-row__value">' + (patternLabels[pat] || pat) + '</span></div>';
+      html += '</div>';
+
+      html += '</div>';
+    });
+    html += '</div>';
+    resultDiv.innerHTML = html;
+  }
+
+  selects.forEach(function(sel) {
+    sel.addEventListener('change', renderComparatorResult);
+  });
+  renderComparatorResult();
+}
+
+/* ===================================================================
    NAVIGATION
    =================================================================== */
 function initNavigation() {
@@ -1563,6 +2157,13 @@ function init() {
   renderComparison(data);
   renderCalculator(data);
   renderGlobalComparison();
+  renderPatternDonut(data);
+  renderUfRadar(data);
+  renderAiHeatmap(data);
+  renderFormatDist(data);
+  renderTechScorecard(data);
+  renderApiTop20(data);
+  initComparator(data);
   initNavigation();
 }
 

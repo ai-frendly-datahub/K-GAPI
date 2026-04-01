@@ -1,2 +1,8 @@
 # K-GAPI
-공공 API 현황 분석
+대한민국의 공공 API들이 AI 시대에 어떤 수준인지 분석해봤습니다.
+
+* [대한민국 공공 Open API 현황 분석](index.html)
+* [대한민국 공공 Open API 현황 종합 보고서](report.md)
+
+----
+전종홍 (hollobit@etri.re.kr) 

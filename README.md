@@ -39,8 +39,6 @@
 * 종합 분석 보고서 (report)
    * policy_recommendations.md  ← [정부 대상 정책 제언서](report/policy_recommendations.md)
    * korea_improvement_roadmap.md ← [해외 사례 기반 개선 로드맵](report/korea_improvement_roadmap.md)
-   * policy_recommendations.md  ← [정부 대상 정책 제언서](report/policy_recommendations.md)
-   * korea_improvement_roadmap.md ← [해외 사례 기반 개선 로드맵](report/korea_improvement_roadmap.md)
    * tco_analysis.md            ← [총 비용(TCO) 분석](report/tco_analysis.md)
    * oecd_gap_analysis.md       ← [OECD 지표 vs 실제 품질 괴리](report/oecd_gap_analysis.md)
    * developer_guide.md         ← [개발자 온보딩 가이드](report/developer_guide.md)

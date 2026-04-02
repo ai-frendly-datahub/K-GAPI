@@ -527,6 +527,17 @@ body {
   transition: width 0.3s;
 }
 .score-bar__label { font-size: 0.75rem; font-weight: 600; min-width: 2rem; text-align: right; }
+/* ===== Print Styles ===== */
+@media print {
+  .header, .nav-tabs, .footer { position: static; }
+  .nav-tabs { display: none; }
+  body { background: #fff; font-size: 10pt; }
+  .container { max-width: 100%; padding: 0; }
+  .card { box-shadow: none; border: 1px solid #ddd; break-inside: avoid; }
+  .section { page-break-before: auto; }
+  button, .filter-select { display: none !important; }
+  .header__inner a[href*="github"] { display: none !important; }
+}
 </style>
 </head>
 <body>
@@ -540,7 +551,15 @@ body {
         <div class="header__subtitle">Korean Public Open API Comprehensive Analysis Dashboard</div>
       </div>
     </div>
-    <div style="display:flex;align-items:center;gap:1rem;">
+    <div style="display:flex;align-items:center;gap:0.5rem;">
+      <button onclick="exportCSV()" style="display:flex;align-items:center;gap:0.3rem;text-decoration:none;color:var(--color-text);background:#f1f3f4;padding:0.4rem 0.75rem;border-radius:6px;font-size:0.8rem;font-weight:600;border:none;cursor:pointer;transition:background 0.15s;" onmouseover="this.style.background='#e0e3e7'" onmouseout="this.style.background='#f1f3f4'">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        CSV
+      </button>
+      <button onclick="exportPDF()" style="display:flex;align-items:center;gap:0.3rem;text-decoration:none;color:var(--color-text);background:#f1f3f4;padding:0.4rem 0.75rem;border-radius:6px;font-size:0.8rem;font-weight:600;border:none;cursor:pointer;transition:background 0.15s;" onmouseover="this.style.background='#e0e3e7'" onmouseout="this.style.background='#f1f3f4'">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        PDF
+      </button>
       <a href="https://github.com/hollobit/K-GAPI" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:0.4rem;text-decoration:none;color:var(--color-text);background:#f1f3f4;padding:0.4rem 0.75rem;border-radius:6px;font-size:0.8rem;font-weight:600;transition:background 0.15s;" onmouseover="this.style.background='#e0e3e7'" onmouseout="this.style.background='#f1f3f4'">
         <svg height="18" width="18" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
         GitHub
@@ -560,6 +579,8 @@ body {
     <button class="nav-tab" role="tab" data-section="calculator">ID 계산기</button>
     <button class="nav-tab" role="tab" data-section="findings">핵심 발견</button>
     <button class="nav-tab" role="tab" data-section="deep-analysis">심층 분석</button>
+    <button class="nav-tab" role="tab" data-section="private-compare">민간 비교</button>
+    <button class="nav-tab" role="tab" data-section="deprecated">폐기 이력</button>
   </div>
 </nav>
 
@@ -897,6 +918,58 @@ body {
     </div>
   </section>
 
+  <!-- Section 8: Private API Comparison -->
+  <section id="section-private-compare" class="section">
+    <h2 class="section__title">공공 vs 민간 API 비교</h2>
+
+    <div class="card" style="margin-bottom:1.5rem;">
+      <div class="chart-card__title">항목별 점수 비교 (민간 평균 vs 공공 평균)</div>
+      <div id="private-compare-chart"></div>
+    </div>
+
+    <div class="card">
+      <div class="chart-card__title">민간 API 상세 비교표</div>
+      <div style="overflow-x:auto;">
+        <table class="data-table" id="private-compare-table">
+          <thead>
+            <tr>
+              <th>서비스</th>
+              <th>인증</th>
+              <th>포맷</th>
+              <th>HTTP코드</th>
+              <th>SDK</th>
+              <th>샌드박스</th>
+              <th>OpenAPI</th>
+              <th>문서품질</th>
+              <th>합계</th>
+            </tr>
+          </thead>
+          <tbody id="private-compare-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 9: Deprecated API Timeline -->
+  <section id="section-deprecated" class="section">
+    <h2 class="section__title">API 폐기/변경 이력</h2>
+
+    <div class="card" style="margin-bottom:1.5rem;">
+      <div class="chart-card__title">연도별 폐기/변경 건수</div>
+      <div id="deprecated-year-chart"></div>
+    </div>
+
+    <div class="card" style="margin-bottom:1.5rem;">
+      <div class="chart-card__title">폐기 유형 분포</div>
+      <div id="deprecated-type-chart"></div>
+    </div>
+
+    <div class="card">
+      <div class="chart-card__title">폐기/변경 타임라인</div>
+      <div id="deprecated-timeline"></div>
+    </div>
+  </section>
+
 </main>
 
 <footer class="footer">
@@ -970,8 +1043,8 @@ const PORTALS_DATA = [
       "doc_quality": 1,
       "rate_limit": 1,
       "error_handling": 1,
-      "sdk_samples": 0,
-      "total": 6,
+      "sdk_samples": 1,
+      "total": 7,
       "grade": "C"
     },
     "ai_readiness": {
@@ -1432,9 +1505,9 @@ const PORTALS_DATA = [
       "doc_quality": 1,
       "rate_limit": 1,
       "error_handling": 1,
-      "sdk_samples": 0,
-      "total": 8,
-      "grade": "C"
+      "sdk_samples": 1,
+      "total": 9,
+      "grade": "B"
     },
     "ai_readiness": {
       "machine_schema": 0,
@@ -1509,8 +1582,8 @@ const PORTALS_DATA = [
       "doc_quality": 1,
       "rate_limit": 2,
       "error_handling": 1,
-      "sdk_samples": 0,
-      "total": 9,
+      "sdk_samples": 1,
+      "total": 10,
       "grade": "B"
     },
     "ai_readiness": {
@@ -1586,9 +1659,9 @@ const PORTALS_DATA = [
       "doc_quality": 1,
       "rate_limit": 1,
       "error_handling": 1,
-      "sdk_samples": 0,
-      "total": 5,
-      "grade": "D"
+      "sdk_samples": 1,
+      "total": 6,
+      "grade": "C"
     },
     "ai_readiness": {
       "machine_schema": 0,
@@ -1731,18 +1804,18 @@ const PORTALS_DATA = [
     "certificate_required": false,
     "mcp_server": "https://github.com/pinnaclesoft-ko/be-node-seoul-data-mcp",
     "sdk_library": null,
-    "api_count_estimate": 1000,
+    "api_count_estimate": 5503,
     "free": true,
     "user_friendliness": {
-      "signup_ease": 1,
+      "signup_ease": 2,
       "approval_speed": 2,
       "data_format": 1,
       "doc_quality": 1,
       "rate_limit": 1,
       "error_handling": 1,
-      "sdk_samples": 0,
-      "total": 7,
-      "grade": "C"
+      "sdk_samples": 1,
+      "total": 9,
+      "grade": "B"
     },
     "ai_readiness": {
       "machine_schema": 0,
@@ -1755,7 +1828,7 @@ const PORTALS_DATA = [
       "total": 3,
       "grade": "D"
     },
-    "notes": "Largest local gov portal with 1000+ APIs. Uses path+query mixed style. Start/end index paging."
+    "notes": "Largest local gov portal. 5,503 OpenAPIs, 8,180+ datasets. Path+query mixed style (type_c_mixed). SSO via Seoul integrated portal. 서울 열린데이터광장."
   },
   {
     "id": "gyeonggi",
@@ -1832,7 +1905,7 @@ const PORTALS_DATA = [
       "total": 3,
       "grade": "D"
     },
-    "notes": "Second largest local gov portal. Separate ID required."
+    "notes": "경기데이터드림. AI데이터행정과 운영. API Key 즉시 발급. 별도 ID 필요."
   },
   {
     "id": "busan",
@@ -1885,7 +1958,7 @@ const PORTALS_DATA = [
     "certificate_required": false,
     "mcp_server": null,
     "sdk_library": null,
-    "api_count_estimate": 400,
+    "api_count_estimate": 326,
     "free": true,
     "user_friendliness": {
       "signup_ease": 2,
@@ -1909,14 +1982,14 @@ const PORTALS_DATA = [
       "total": 3,
       "grade": "D"
     },
-    "notes": "Separate ID required."
+    "notes": "Big-데이터웨이브. API 326개, 파일 2,620개. 기관회원 data.go.kr 연동 가능."
   },
   {
     "id": "jeju",
     "name": "제주 데이터허브",
     "name_en": "Jeju Data Hub",
     "institution": "제주특별자치도",
-    "url": "https://data.jeju.go.kr",
+    "url": "https://www.jeju.go.kr/open/data.htm",
     "category": "MULTI",
     "portal_type": "local_gov",
     "signup": {
@@ -1962,7 +2035,7 @@ const PORTALS_DATA = [
     "certificate_required": false,
     "mcp_server": null,
     "sdk_library": null,
-    "api_count_estimate": 250,
+    "api_count_estimate": 200,
     "free": true,
     "user_friendliness": {
       "signup_ease": 2,
@@ -1986,7 +2059,7 @@ const PORTALS_DATA = [
       "total": 3,
       "grade": "D"
     },
-    "notes": "Separate ID required."
+    "notes": "data.jeju.go.kr → jeju.go.kr/open/data.htm 리다이렉트. 독립 포털이 아닌 도청 웹사이트 내 페이지. 비회원 로그인 가능. 디지털혁신과 운영."
   },
   {
     "id": "daegu",
@@ -2039,7 +2112,7 @@ const PORTALS_DATA = [
     "certificate_required": false,
     "mcp_server": null,
     "sdk_library": null,
-    "api_count_estimate": 300,
+    "api_count_estimate": 500,
     "free": true,
     "user_friendliness": {
       "signup_ease": 2,
@@ -2063,7 +2136,7 @@ const PORTALS_DATA = [
       "total": 3,
       "grade": "D"
     },
-    "notes": "Separate ID required."
+    "notes": "D-데이터허브. 18,280 데이터셋, 13,829 서비스. 16개 데이터 도메인."
   },
   {
     "id": "incheon",
@@ -2140,14 +2213,14 @@ const PORTALS_DATA = [
       "total": 3,
       "grade": "D"
     },
-    "notes": "Separate ID required."
+    "notes": "인천데이터포털. JavaScript 기반 SPA 렌더링. 별도 ID 필요."
   },
   {
     "id": "gwangju",
-    "name": "광주 공공데이터",
+    "name": "광주 빅데이터 통합플랫폼",
     "name_en": "Gwangju Open Data",
     "institution": "광주광역시",
-    "url": "https://data.gwangju.go.kr",
+    "url": "https://bigdata.gwangju.go.kr",
     "category": "MULTI",
     "portal_type": "local_gov",
     "signup": {
@@ -2217,14 +2290,14 @@ const PORTALS_DATA = [
       "total": 3,
       "grade": "D"
     },
-    "notes": "Separate ID required."
+    "notes": "data.gwangju.go.kr 폐기 → bigdata.gwangju.go.kr로 이전. Magic SSO 인증 사용. 빅데이터 통합플랫폼으로 리브랜딩."
   },
   {
     "id": "daejeon",
-    "name": "대전 공공데이터",
+    "name": "대전 빅데이터 포털",
     "name_en": "Daejeon Open Data",
     "institution": "대전광역시",
-    "url": "https://data.daejeon.go.kr",
+    "url": "https://bigdata.daejeon.go.kr",
     "category": "MULTI",
     "portal_type": "local_gov",
     "signup": {
@@ -2294,7 +2367,7 @@ const PORTALS_DATA = [
       "total": 3,
       "grade": "D"
     },
-    "notes": "Separate ID required."
+    "notes": "data.daejeon.go.kr 폐기 → bigdata.daejeon.go.kr로 이전. 대시민 빅데이터 포털. 20+ 데이터 카테고리."
   },
   {
     "id": "ulsan",
@@ -2371,14 +2444,14 @@ const PORTALS_DATA = [
       "total": 3,
       "grade": "D"
     },
-    "notes": "Separate ID required."
+    "notes": "울산광역시 데이터포털. 공공데이터 검색, 빅데이터, 통계데이터 섹션. 해울콜센터 052-120."
   },
   {
     "id": "gangwon",
     "name": "강원 공공데이터",
     "name_en": "Gangwon Open Data",
     "institution": "강원특별자치도",
-    "url": "https://data.gwd.go.kr",
+    "url": "https://state.gwd.go.kr/portal/administration/openData/dataopen",
     "category": "MULTI",
     "portal_type": "local_gov",
     "signup": {
@@ -2424,7 +2497,7 @@ const PORTALS_DATA = [
     "certificate_required": false,
     "mcp_server": null,
     "sdk_library": null,
-    "api_count_estimate": 150,
+    "api_count_estimate": 100,
     "free": true,
     "user_friendliness": {
       "signup_ease": 2,
@@ -2448,14 +2521,14 @@ const PORTALS_DATA = [
       "total": 3,
       "grade": "D"
     },
-    "notes": "Separate ID required."
+    "notes": "data.gwd.go.kr 서버 중단. 도청 사이트(state.gwd.go.kr) 내 페이지로 전환. 상당수 data.go.kr 위임. 독립 포털 아님."
   },
   {
     "id": "chungnam",
-    "name": "충남 공공데이터",
+    "name": "충남 데이터포털 올담",
     "name_en": "Chungnam Open Data",
     "institution": "충청남도",
-    "url": "https://data.chungnam.go.kr",
+    "url": "https://alldam.chungnam.go.kr",
     "category": "MULTI",
     "portal_type": "local_gov",
     "signup": {
@@ -2525,14 +2598,14 @@ const PORTALS_DATA = [
       "total": 3,
       "grade": "D"
     },
-    "notes": "Separate ID required."
+    "notes": "data.chungnam.go.kr 폐기 → alldam.chungnam.go.kr로 이전. 15개 데이터 분야. 올담(AllDAM)으로 리브랜딩."
   },
   {
     "id": "gyeongbuk",
     "name": "경북 공공데이터",
     "name_en": "Gyeongbuk Open Data",
     "institution": "경상북도",
-    "url": "https://data.gb.go.kr",
+    "url": "https://www.gb.go.kr/Main/open_contents/section/data/index.html",
     "category": "MULTI",
     "portal_type": "local_gov",
     "signup": {
@@ -2578,7 +2651,7 @@ const PORTALS_DATA = [
     "certificate_required": false,
     "mcp_server": null,
     "sdk_library": null,
-    "api_count_estimate": 150,
+    "api_count_estimate": 124,
     "free": true,
     "user_friendliness": {
       "signup_ease": 2,
@@ -2602,14 +2675,14 @@ const PORTALS_DATA = [
       "total": 3,
       "grade": "D"
     },
-    "notes": "Separate ID required."
+    "notes": "data.gb.go.kr 서버 중단. 도청 사이트(gb.go.kr) 내 페이지로 전환. 파일 541개, OpenAPI 124개, 표준데이터 421개. 독립 포털 아님."
   },
   {
     "id": "gyeongnam",
-    "name": "경남 공공데이터",
+    "name": "경남 빅데이터 허브플랫폼",
     "name_en": "Gyeongnam Open Data",
     "institution": "경상남도",
-    "url": "https://data.gyeongnam.go.kr",
+    "url": "https://bigdata.gyeongnam.go.kr",
     "category": "MULTI",
     "portal_type": "local_gov",
     "signup": {
@@ -2679,7 +2752,7 @@ const PORTALS_DATA = [
       "total": 3,
       "grade": "D"
     },
-    "notes": "Separate ID required."
+    "notes": "data.gyeongnam.go.kr 서버 중단 → bigdata.gyeongnam.go.kr로 이전. SSL 인증서 문제 간헐적 발생. 빅데이터 허브로 리브랜딩."
   },
   {
     "id": "chungbuk",
@@ -2756,14 +2829,14 @@ const PORTALS_DATA = [
       "total": 3,
       "grade": "D"
     },
-    "notes": "Separate ID required."
+    "notes": "충청북도 빅데이터 허브 플랫폼. 11개 시군 데이터 통합. 인구/고용/환경/교통/재정 카테고리."
   },
   {
     "id": "jeonbuk",
-    "name": "전북 공공데이터",
+    "name": "전북 빅데이터 허브",
     "name_en": "Jeonbuk Open Data",
     "institution": "전북특별자치도",
-    "url": "https://data.jeonbuk.go.kr",
+    "url": "https://www.bigdatahub.go.kr",
     "category": "MULTI",
     "portal_type": "local_gov",
     "signup": {
@@ -2833,7 +2906,7 @@ const PORTALS_DATA = [
       "total": 3,
       "grade": "D"
     },
-    "notes": "Separate ID required."
+    "notes": "data.jeonbuk.go.kr 폐기 → bigdatahub.go.kr로 이전. HTTP는 접근 가능하나 HTTPS SSL 인증서 문제."
   },
   {
     "id": "jeonnam",
@@ -2910,14 +2983,14 @@ const PORTALS_DATA = [
       "total": 3,
       "grade": "D"
     },
-    "notes": "Separate ID required."
+    "notes": "전라남도 빅데이터 허브. 13개 데이터 분야(농업/관광/안전 등). 농업 컨설팅 분석 특화."
   },
   {
     "id": "sejong",
     "name": "세종 공공데이터",
     "name_en": "Sejong Open Data",
     "institution": "세종특별자치시",
-    "url": "https://data.sejong.go.kr",
+    "url": "https://www.sejong.go.kr/kor/sub03_0901.do",
     "category": "MULTI",
     "portal_type": "local_gov",
     "signup": {
@@ -2963,7 +3036,7 @@ const PORTALS_DATA = [
     "certificate_required": false,
     "mcp_server": null,
     "sdk_library": null,
-    "api_count_estimate": 75,
+    "api_count_estimate": 50,
     "free": true,
     "user_friendliness": {
       "signup_ease": 2,
@@ -2987,7 +3060,7 @@ const PORTALS_DATA = [
       "total": 3,
       "grade": "D"
     },
-    "notes": "Smallest local gov portal. Separate ID required."
+    "notes": "data.sejong.go.kr 서버 중단. 시청 사이트(sejong.go.kr) 내 페이지로 전환. 실제 데이터는 data.go.kr로 위임. 독립 포털 아님."
   },
   {
     "id": "kma",
@@ -3038,7 +3111,7 @@ const PORTALS_DATA = [
       "origin_has_more": true
     },
     "certificate_required": false,
-    "mcp_server": null,
+    "mcp_server": "https://github.com/Koomook/data-go-mcp-servers",
     "sdk_library": null,
     "api_count_estimate": 100,
     "free": true,
@@ -3049,8 +3122,8 @@ const PORTALS_DATA = [
       "doc_quality": 1,
       "rate_limit": 1,
       "error_handling": 1,
-      "sdk_samples": 0,
-      "total": 6,
+      "sdk_samples": 1,
+      "total": 7,
       "grade": "C"
     },
     "ai_readiness": {
@@ -3126,8 +3199,8 @@ const PORTALS_DATA = [
       "doc_quality": 1,
       "rate_limit": 1,
       "error_handling": 1,
-      "sdk_samples": 0,
-      "total": 7,
+      "sdk_samples": 1,
+      "total": 8,
       "grade": "C"
     },
     "ai_readiness": {
@@ -3665,9 +3738,9 @@ const PORTALS_DATA = [
       "doc_quality": 1,
       "rate_limit": 1,
       "error_handling": 1,
-      "sdk_samples": 0,
-      "total": 8,
-      "grade": "C"
+      "sdk_samples": 1,
+      "total": 9,
+      "grade": "B"
     },
     "ai_readiness": {
       "machine_schema": 0,
@@ -3742,9 +3815,9 @@ const PORTALS_DATA = [
       "doc_quality": 1,
       "rate_limit": 1,
       "error_handling": 1,
-      "sdk_samples": 0,
-      "total": 8,
-      "grade": "C"
+      "sdk_samples": 1,
+      "total": 9,
+      "grade": "B"
     },
     "ai_readiness": {
       "machine_schema": 0,
@@ -3885,7 +3958,7 @@ const PORTALS_DATA = [
       "origin_has_more": true
     },
     "certificate_required": false,
-    "mcp_server": null,
+    "mcp_server": "https://github.com/ceami/opendata-mcp",
     "sdk_library": null,
     "api_count_estimate": 50,
     "free": true,
@@ -3896,9 +3969,9 @@ const PORTALS_DATA = [
       "doc_quality": 1,
       "rate_limit": 1,
       "error_handling": 1,
-      "sdk_samples": 0,
-      "total": 8,
-      "grade": "C"
+      "sdk_samples": 1,
+      "total": 9,
+      "grade": "B"
     },
     "ai_readiness": {
       "machine_schema": 0,
@@ -4050,9 +4123,9 @@ const PORTALS_DATA = [
       "doc_quality": 1,
       "rate_limit": 1,
       "error_handling": 1,
-      "sdk_samples": 0,
-      "total": 8,
-      "grade": "C"
+      "sdk_samples": 1,
+      "total": 9,
+      "grade": "B"
     },
     "ai_readiness": {
       "machine_schema": 0,
@@ -4127,9 +4200,9 @@ const PORTALS_DATA = [
       "doc_quality": 1,
       "rate_limit": 1,
       "error_handling": 1,
-      "sdk_samples": 0,
-      "total": 8,
-      "grade": "C"
+      "sdk_samples": 1,
+      "total": 9,
+      "grade": "B"
     },
     "ai_readiness": {
       "machine_schema": 0,
@@ -4358,9 +4431,9 @@ const PORTALS_DATA = [
       "doc_quality": 1,
       "rate_limit": 1,
       "error_handling": 1,
-      "sdk_samples": 0,
-      "total": 8,
-      "grade": "C"
+      "sdk_samples": 1,
+      "total": 9,
+      "grade": "B"
     },
     "ai_readiness": {
       "machine_schema": 0,
@@ -4512,8 +4585,8 @@ const PORTALS_DATA = [
       "doc_quality": 1,
       "rate_limit": 1,
       "error_handling": 1,
-      "sdk_samples": 0,
-      "total": 9,
+      "sdk_samples": 1,
+      "total": 10,
       "grade": "B"
     },
     "ai_readiness": {
@@ -4974,9 +5047,9 @@ const PORTALS_DATA = [
       "doc_quality": 1,
       "rate_limit": 1,
       "error_handling": 1,
-      "sdk_samples": 0,
-      "total": 8,
-      "grade": "C"
+      "sdk_samples": 1,
+      "total": 9,
+      "grade": "B"
     },
     "ai_readiness": {
       "machine_schema": 0,
@@ -15326,6 +15399,229 @@ function initComparator(data) {
 }
 
 /* ===================================================================
+   EXPORT: CSV
+   =================================================================== */
+function exportCSV() {
+  var data = PORTALS_DATA;
+  var headers = ['ID','이름','기관','URL','카테고리','포털유형','가입방식','가입난이도','승인방식','승인소요일','인증유형','키유효기간(년)','자동갱신','API스타일','기본포맷','JSON지원','XML지원','일호출한도','증량가능','RateLimit헤더','CORS','HTTPS','OpenAPI스펙','샌드박스','별도가입','인증서필요','API수추정','무료','사용자편의성등급','사용자편의성점수','AI적합성등급','AI적합성점수','MCP서버','SDK라이브러리'];
+  var rows = data.map(function(p) {
+    return [
+      p.id, p.name, p.institution, p.url, p.category, p.portal_type,
+      p.signup.method, p.signup.difficulty, p.approval.method, p.approval.avg_days,
+      p.auth.type, p.auth.key_validity_years, p.auth.auto_renewal,
+      p.api_style, p.format.default, p.format.supports_json, p.format.supports_xml,
+      p.rate_limit.daily, p.rate_limit.increasable, p.rate_limit.rate_limit_headers,
+      p.technical.cors, p.technical.https, p.technical.openapi_spec, p.technical.sandbox,
+      p.signup.separate_id, p.certificate_required, p.api_count_estimate, p.free,
+      p.user_friendliness.grade, p.user_friendliness.total,
+      p.ai_readiness.grade, p.ai_readiness.total,
+      p.mcp_server || '', p.sdk_library || ''
+    ].map(function(v) {
+      if (v === null || v === undefined) return '';
+      var s = String(v);
+      if (s.indexOf(',') !== -1 || s.indexOf('"') !== -1 || s.indexOf('\n') !== -1) {
+        return '"' + s.replace(/"/g, '""') + '"';
+      }
+      return s;
+    }).join(',');
+  });
+  var csv = '\uFEFF' + headers.join(',') + '\n' + rows.join('\n');
+  var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  var link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'korea_public_api_portals.csv';
+  link.click();
+  URL.revokeObjectURL(link.href);
+}
+
+/* ===================================================================
+   EXPORT: PDF (Print)
+   =================================================================== */
+function exportPDF() {
+  window.print();
+}
+
+/* ===================================================================
+   PRIVATE API COMPARISON
+   =================================================================== */
+var PRIVATE_APIS = [
+  { id:"kakao", name:"카카오", scores:{auth:2,format:2,docs:2,http:2,rate_limit:1,cors:1,error:1,sdk:2,openapi:0,sandbox:2} },
+  { id:"naver", name:"네이버", scores:{auth:2,format:2,docs:2,http:2,rate_limit:1,cors:1,error:1,sdk:2,openapi:0,sandbox:0} },
+  { id:"toss", name:"토스페이먼츠", scores:{auth:2,format:2,docs:2,http:2,rate_limit:1,cors:1,error:2,sdk:2,openapi:2,sandbox:2} },
+  { id:"nhn", name:"NHN Cloud", scores:{auth:2,format:2,docs:2,http:2,rate_limit:1,cors:0,error:1,sdk:2,openapi:1,sandbox:2} },
+  { id:"line", name:"LINE", scores:{auth:2,format:2,docs:2,http:2,rate_limit:2,cors:1,error:2,sdk:2,openapi:2,sandbox:1} },
+  { id:"coupang", name:"쿠팡", scores:{auth:2,format:2,docs:2,http:2,rate_limit:1,cors:0,error:1,sdk:2,openapi:0,sandbox:2} },
+  { id:"baemin", name:"배달의민족", scores:{auth:2,format:2,docs:1,http:2,rate_limit:1,cors:0,error:1,sdk:0,openapi:0,sandbox:2} },
+  { id:"ncp", name:"네이버클라우드", scores:{auth:2,format:2,docs:2,http:2,rate_limit:1,cors:0,error:2,sdk:2,openapi:2,sandbox:2} },
+  { id:"cj", name:"CJ대한통운", scores:{auth:2,format:2,docs:1,http:2,rate_limit:1,cors:0,error:1,sdk:0,openapi:0,sandbox:2} },
+  { id:"sk", name:"SK오픈API", scores:{auth:1,format:2,docs:2,http:2,rate_limit:1,cors:0,error:1,sdk:2,openapi:0,sandbox:0} },
+  { id:"kakaopay", name:"카카오페이", scores:{auth:2,format:2,docs:2,http:2,rate_limit:1,cors:0,error:2,sdk:2,openapi:0,sandbox:2} }
+];
+
+function renderPrivateComparison() {
+  var scoreKeys = ['auth','format','docs','http','rate_limit','cors','error','sdk','openapi','sandbox'];
+  var scoreLabels = ['인증','포맷','문서','HTTP코드','호출한도','CORS','에러처리','SDK','OpenAPI','샌드박스'];
+
+  // Calculate averages
+  var privateAvg = {};
+  scoreKeys.forEach(function(k) {
+    var sum = PRIVATE_APIS.reduce(function(a,p) { return a + p.scores[k]; }, 0);
+    privateAvg[k] = sum / PRIVATE_APIS.length;
+  });
+  var publicAvg = { auth:1, format:1, docs:1, http:0, rate_limit:0, cors:0, error:0, sdk:0, openapi:0, sandbox:0 };
+
+  // Bar chart comparison
+  var chartDiv = document.getElementById('private-compare-chart');
+  if (!chartDiv) return;
+  var barW = 600, barH = 320, pad = { top:30, right:30, bottom:60, left:90 };
+  var innerW = barW - pad.left - pad.right;
+  var innerH = barH - pad.top - pad.bottom;
+  var barGap = 4, groupH = innerH / scoreKeys.length;
+  var halfBar = (groupH - barGap * 3) / 2;
+
+  var svg = '<svg viewBox="0 0 '+barW+' '+barH+'" style="width:100%;max-width:'+barW+'px;">';
+  svg += '<style>.pvt-label{font-size:11px;fill:#5f6368}.pvt-val{font-size:10px;fill:#fff;font-weight:600}.pvt-legend{font-size:11px;fill:#202124}</style>';
+
+  scoreKeys.forEach(function(k, i) {
+    var y = pad.top + i * groupH;
+    var pvtW = (privateAvg[k] / 2) * innerW;
+    var pubW = (publicAvg[k] / 2) * innerW;
+
+    svg += '<text x="'+(pad.left-8)+'" y="'+(y + groupH/2 + 4)+'" text-anchor="end" class="pvt-label">' + scoreLabels[i] + '</text>';
+    svg += '<rect x="'+pad.left+'" y="'+(y+barGap)+'" width="'+Math.max(pvtW,2)+'" height="'+halfBar+'" rx="3" fill="#1a73e8" opacity="0.85"/>';
+    if (pvtW > 30) svg += '<text x="'+(pad.left + pvtW/2)+'" y="'+(y+barGap+halfBar/2+4)+'" text-anchor="middle" class="pvt-val">' + privateAvg[k].toFixed(1) + '</text>';
+    svg += '<rect x="'+pad.left+'" y="'+(y+barGap+halfBar+barGap)+'" width="'+Math.max(pubW,2)+'" height="'+halfBar+'" rx="3" fill="#ea4335" opacity="0.85"/>';
+    if (pubW > 30) svg += '<text x="'+(pad.left + pubW/2)+'" y="'+(y+barGap*2+halfBar*1.5+4)+'" text-anchor="middle" class="pvt-val">' + publicAvg[k].toFixed(1) + '</text>';
+  });
+
+  // Legend
+  svg += '<rect x="'+pad.left+'" y="'+(barH-25)+'" width="14" height="14" rx="3" fill="#1a73e8" opacity="0.85"/>';
+  svg += '<text x="'+(pad.left+20)+'" y="'+(barH-13)+'" class="pvt-legend">민간 평균</text>';
+  svg += '<rect x="'+(pad.left+100)+'" y="'+(barH-25)+'" width="14" height="14" rx="3" fill="#ea4335" opacity="0.85"/>';
+  svg += '<text x="'+(pad.left+120)+'" y="'+(barH-13)+'" class="pvt-legend">공공 평균</text>';
+  svg += '</svg>';
+  chartDiv.innerHTML = svg;
+
+  // Table
+  var tbody = document.getElementById('private-compare-tbody');
+  if (!tbody) return;
+  var html = '';
+  PRIVATE_APIS.forEach(function(p) {
+    var total = scoreKeys.reduce(function(a,k) { return a + p.scores[k]; }, 0);
+    html += '<tr>';
+    html += '<td style="font-weight:600;">' + p.name + '</td>';
+    html += '<td>' + p.scores.auth + '/2</td>';
+    html += '<td>' + p.scores.format + '/2</td>';
+    html += '<td>' + (p.scores.http === 2 ? 'O' : '-') + '</td>';
+    html += '<td>' + (p.scores.sdk === 2 ? 'O' : '-') + '</td>';
+    html += '<td>' + (p.scores.sandbox === 2 ? 'O' : '-') + '</td>';
+    html += '<td>' + (p.scores.openapi === 2 ? 'O' : '-') + '</td>';
+    html += '<td>' + p.scores.docs + '/2</td>';
+    html += '<td style="font-weight:600;">' + total + '/20</td>';
+    html += '</tr>';
+  });
+  // Add public avg row
+  var pubTotal = scoreKeys.reduce(function(a,k) { return a + publicAvg[k]; }, 0);
+  html += '<tr style="background:#fce8e6;font-weight:600;">';
+  html += '<td>공공 API 평균</td><td>1/2</td><td>1/2</td><td>-</td><td>-</td><td>-</td><td>-</td><td>1/2</td><td>' + pubTotal + '/20</td>';
+  html += '</tr>';
+  tbody.innerHTML = html;
+}
+
+/* ===================================================================
+   DEPRECATED API TIMELINE
+   =================================================================== */
+var DEPRECATED_APIS = [
+  { name:"고용노동부 외국인고용허가 API", date:"2022-03", status:"폐기", category:"EMPL", notice:false, reason:"시스템 재구축" },
+  { name:"식약처 회수판매중지 구 API", date:"2022-12", status:"버전 교체", category:"FOOD", notice:true, reason:"식품안전나라 통합" },
+  { name:"통계청 SGIS API v1", date:"2023-01", status:"버전 교체", category:"ADMN", notice:true, reason:"v2 전면 교체" },
+  { name:"KRIC 철도정보 구 엔드포인트", date:"2023-03", status:"스펙 변경", category:"TRAF", notice:false, reason:"도메인+인증 변경" },
+  { name:"한국마사회 경마정보 API", date:"2023-06", status:"폐기", category:"ETC", notice:false, reason:"내부 시스템 개편" },
+  { name:"국세청 세금정보 조회 API v1", date:"2023-07", status:"스펙 변경", category:"FIN", notice:true, reason:"보안 강화" },
+  { name:"기상청 RSS 서비스", date:"2023-09", status:"폐기", category:"ENV", notice:true, reason:"API허브 통합" },
+  { name:"NIA 빅데이터 플랫폼 API", date:"2024-03", status:"폐기", category:"TECH", notice:true, reason:"사업 종료" },
+  { name:"국토부 실거래가 구 API", date:"2024-06", status:"스펙 변경", category:"REAL", notice:false, reason:"응답 필드+페이징 변경" },
+  { name:"건강보험 건강검진정보 구 API", date:"2024-09", status:"폐기", category:"HLTH", notice:true, reason:"마이데이터 이관" },
+  { name:"ETRI 인공지능 API", date:"2024-12", status:"폐기", category:"TECH", notice:true, reason:"연구과제 종료" },
+  { name:"건축물대장 API v2 스펙변경", date:"2025-01", status:"스펙 변경", category:"REAL", notice:false, reason:"XML 구조 변경" }
+];
+
+function renderDeprecatedTimeline() {
+  var statusColors = { '폐기':'#d93025', '버전 교체':'#e37400', '스펙 변경':'#1a73e8' };
+
+  // Year chart
+  var yearCounts = {};
+  DEPRECATED_APIS.forEach(function(d) {
+    var y = d.date.substring(0, 4);
+    yearCounts[y] = (yearCounts[y] || 0) + 1;
+  });
+  var years = Object.keys(yearCounts).sort();
+  var maxCount = Math.max.apply(null, years.map(function(y) { return yearCounts[y]; }));
+
+  var yearDiv = document.getElementById('deprecated-year-chart');
+  if (yearDiv) {
+    var w = 500, h = 200, pad = { top:20, right:20, bottom:40, left:40 };
+    var iw = w - pad.left - pad.right, ih = h - pad.top - pad.bottom;
+    var barW = Math.min(60, iw / years.length - 10);
+    var svg = '<svg viewBox="0 0 '+w+' '+h+'" style="width:100%;max-width:'+w+'px;">';
+    years.forEach(function(y, i) {
+      var x = pad.left + (i + 0.5) * (iw / years.length) - barW/2;
+      var bh = (yearCounts[y] / maxCount) * ih;
+      svg += '<rect x="'+x+'" y="'+(pad.top + ih - bh)+'" width="'+barW+'" height="'+bh+'" rx="4" fill="#ea4335" opacity="0.8"/>';
+      svg += '<text x="'+(x+barW/2)+'" y="'+(pad.top + ih - bh - 6)+'" text-anchor="middle" style="font-size:13px;font-weight:700;fill:#202124;">'+yearCounts[y]+'</text>';
+      svg += '<text x="'+(x+barW/2)+'" y="'+(h-15)+'" text-anchor="middle" style="font-size:11px;fill:#5f6368;">'+y+'</text>';
+    });
+    svg += '</svg>';
+    yearDiv.innerHTML = svg;
+  }
+
+  // Type distribution
+  var typeCounts = {};
+  DEPRECATED_APIS.forEach(function(d) { typeCounts[d.status] = (typeCounts[d.status] || 0) + 1; });
+  var typeDiv = document.getElementById('deprecated-type-chart');
+  if (typeDiv) {
+    var html = '<div style="display:flex;flex-wrap:wrap;gap:1rem;justify-content:center;padding:1rem 0;">';
+    Object.keys(typeCounts).forEach(function(t) {
+      var pct = Math.round(typeCounts[t] / DEPRECATED_APIS.length * 100);
+      html += '<div style="text-align:center;min-width:120px;">';
+      html += '<div style="font-size:2rem;font-weight:700;color:' + (statusColors[t]||'#5f6368') + ';">' + typeCounts[t] + '</div>';
+      html += '<div style="font-size:0.85rem;color:var(--color-text-secondary);">' + t + ' (' + pct + '%)</div>';
+      html += '</div>';
+    });
+    var noNotice = DEPRECATED_APIS.filter(function(d) { return !d.notice; }).length;
+    var noNoticePct = Math.round(noNotice / DEPRECATED_APIS.length * 100);
+    html += '<div style="text-align:center;min-width:120px;">';
+    html += '<div style="font-size:2rem;font-weight:700;color:#d93025;">' + noNoticePct + '%</div>';
+    html += '<div style="font-size:0.85rem;color:var(--color-text-secondary);">사전 무공지</div>';
+    html += '</div>';
+    html += '</div>';
+    typeDiv.innerHTML = html;
+  }
+
+  // Timeline
+  var tlDiv = document.getElementById('deprecated-timeline');
+  if (!tlDiv) return;
+  var html = '<div style="position:relative;padding-left:2rem;">';
+  html += '<div style="position:absolute;left:0.6rem;top:0;bottom:0;width:2px;background:var(--color-border);"></div>';
+  DEPRECATED_APIS.slice().sort(function(a,b) { return b.date.localeCompare(a.date); }).forEach(function(d) {
+    var color = statusColors[d.status] || '#5f6368';
+    html += '<div style="position:relative;margin-bottom:1.25rem;padding-left:1.5rem;">';
+    html += '<div style="position:absolute;left:-1.45rem;top:0.3rem;width:12px;height:12px;border-radius:50%;background:' + color + ';border:2px solid #fff;box-shadow:0 0 0 2px ' + color + ';"></div>';
+    html += '<div style="display:flex;align-items:baseline;gap:0.5rem;flex-wrap:wrap;">';
+    html += '<span style="font-size:0.75rem;color:var(--color-text-secondary);min-width:5rem;">' + d.date + '</span>';
+    html += '<span style="font-size:0.7rem;padding:0.1rem 0.4rem;border-radius:4px;color:#fff;background:' + color + ';">' + d.status + '</span>';
+    html += '<span style="font-weight:600;font-size:0.85rem;">' + d.name + '</span>';
+    html += '</div>';
+    html += '<div style="font-size:0.8rem;color:var(--color-text-secondary);margin-top:0.2rem;">' + d.reason;
+    if (!d.notice) html += ' <span style="color:#d93025;font-weight:600;">[무공지]</span>';
+    html += '</div>';
+    html += '</div>';
+  });
+  html += '</div>';
+  tlDiv.innerHTML = html;
+}
+
+/* ===================================================================
    NAVIGATION
    =================================================================== */
 function initNavigation() {
@@ -15383,6 +15679,8 @@ function init() {
   renderTechScorecard(data);
   renderApiTop20(data);
   initComparator(data);
+  renderPrivateComparison();
+  renderDeprecatedTimeline();
   initNavigation();
 }
 

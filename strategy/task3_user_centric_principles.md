@@ -214,7 +214,7 @@ API 기획 → 등록심사 → 운영 → 모니터링 → 개선 → 폐기
 ### 4.2 세 단계 품질 관리 구조
 
 **Layer 1: 제도적 기반**
-- **API 디자인 표준 고시** (행정안전부): JSON/HTTP/CORS/RateLimit/OpenAPI 최소 기준 具有法律约束力
+- **API 디자인 표준 고시** (행정안전부): JSON/HTTP/CORS/RateLimit/OpenAPI 최소 기준 법적 구속력이 있음
 - **OpenAPI 스펙 제출 의무화**: 신규 API 등록 필수 요건
 - **단계적 의무화**: 사용자 대면 API(MUST) → 내부 API(RECOMMENDED)
 - **연간 품질 평가 공개**: 포털별 점수 공개, 기관 간 경쟁 유도

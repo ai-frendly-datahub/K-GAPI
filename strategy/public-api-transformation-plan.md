@@ -516,18 +516,18 @@ W3C WebMCP = 브라우저의 "문" (웹 인터랙션)
 
 ### 핵심 분석 문서
 
-- [Plans.md](/Users/jonghongjeon/git/gapi/Plans.md) — 173개 포털 전수 평가
-- [mcp-strategy.md](/Users/jonghongjeon/git/gapi/output/mcp-strategy.md) — MCP 전환 전략
-- [policy_recommendations.md](/Users/jonghongjeon/git/gapi/output/policy_recommendations.md) — 정책 제언서
-- [korea_improvement_roadmap.md](/Users/jonghongjeon/git/gapi/output/korea_improvement_roadmap.md) — 해외 사례 기반 개선 로드맵
-- [global_mcp_ecosystem.md](/Users/jonghongjeon/git/gapi/output/global_mcp_ecosystem.md) — 해외 정부 MCP 생태계
-- [api_design_guidelines_comparison.md](/Users/jonghongjeon/git/gapi/output/api_design_guidelines_comparison.md) — 5개국 API 가이드라인 비교
-- [governance_models.md](/Users/jonghongjeon/git/gapi/output/governance_models.md) — 거버넌스 모델 비교
+- [대한민국 공공 Open API 현황 종합 보고서](../report.md) — 173개 포털 전수 평가
+- [mcp-strategy.md](./mcp-strategy.md) — MCP 전환 전략
+- [policy_recommendations.md](../report/policy_recommendations.md) — 정책 제언서
+- [korea_improvement_roadmap.md](../report/korea_improvement_roadmap.md) — 해외 사례 기반 개선 로드맵
+- [global_mcp_ecosystem.md](../comparison/global_mcp_ecosystem.md) — 해외 정부 MCP 생태계
+- [api_design_guidelines_comparison.md](../comparison/api_design_guidelines_comparison.md) — 5개국 API 가이드라인 비교
+- [governance_models.md](../comparison/governance_models.md) — 거버넌스 모델 비교
 
 ### 에이전트 분석 산출물
 
-- [task3_user_centric_principles.md](/Users/jonghongjeon/git/gapi/output/task3_user_centric_principles.md) — 사용자 중심 원칙 및 평가 기준
-- [global_level_strategy.md](/Users/jonghongjeon/git/gapi/output/global_level_strategy.md) — 글로벌 수준 도달 전략
+- [task3_user_centric_principles.md](./task3_user_centric_principles.md) — 사용자 중심 원칙 및 평가 기준
+- [global_level_strategy.md](./global_level_strategy.md) — 글로벌 수준 도달 전략
 
 ### MCP 서버 참고 구현
 

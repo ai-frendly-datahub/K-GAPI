@@ -735,8 +735,8 @@ Deployment Options (우선순위 순):
 ### 관련 문서
 
 - [MCP 기반 공공데이터 API와 오픈소스 프로젝트 정리](https://cognitive.tistory.com/496)
-- [한국 공공 API 전수 조사 Plans.md](./Plans.md)
-- [MCP 서버 개발 가이드](./mcp_guide.md)
+- [대한민국 공공 Open API 현황 종합 보고서](../report.md)
+- [MCP 서버 개발 가이드](../report/mcp_guide.md)
 
 ---
 

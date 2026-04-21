@@ -819,7 +819,7 @@ body {
       <div class="card finding-card">
         <div class="finding-card__title">구조적 문제점</div>
         <ul class="finding-card__list">
-          <li data-icon="!">173개 포털 파편화 -- 전체 커버 시 131개 ID 필요</li>
+          <li data-icon="!">173개 포털 파편화 -- 전체 커버 시 130개 ID 필요</li>
           <li data-icon="!">2010년대 XML/SOAP 설계에서 근본 개선 없음</li>
           <li data-icon="!">모든 포털이 에러 시에도 HTTP 200 반환</li>
           <li data-icon="!">serviceKey 이중 인코딩 문제 (블로그 수백 건)</li>
@@ -1069,8 +1069,7 @@ body {
 
 <script>
 /* ===================================================================
-   DATA - Placeholder sample (5 portals matching schema)
-   This variable will be replaced by the build script.
+   DATA - Embedded portal dataset
    =================================================================== */
 const PORTALS_DATA = [
   {
@@ -14545,14 +14544,14 @@ function computeStats(data) {
 function renderStats(stats) {
   var grid = document.getElementById('stats-grid');
   var separateIds = PORTALS_DATA.filter(function(p) { return p.signup.separate_id; }).length;
-  var totalIds = 1 + separateIds;
+  var totalIds = separateIds;
   var patternA = PORTALS_DATA.filter(function(p) { return p.data_go_kr.pattern === 'A_gateway'; }).length;
   var cards = [
     { value: stats.portalCount + '개', label: '분석 대상 포털', sub: '19개 분야' },
     { value: '~' + stats.totalApis.toLocaleString(), label: '추정 총 API 수', sub: '' },
     { value: stats.avgUfGrade + ' (' + stats.avgUfScore + '/14)', label: '평균 사용자 편의성', sub: '', cls: stats.avgUfGrade === 'D' || stats.avgUfGrade === 'E' ? 'stat-card__value--warning' : '' },
     { value: stats.avgAiGrade + ' (' + stats.avgAiScore + '/14)', label: '평균 AI 적합성', sub: 'OECD 1위 vs 기술품질 2.0/10', cls: 'stat-card__value--warning' },
-    { value: totalIds + '개', label: '전체 API를 사용하려면 필요 ID 수', sub: 'data.go.kr 1개 + 별도 ' + separateIds + '개', cls: 'stat-card__value--warning' },
+    { value: totalIds + '개', label: '전체 API를 사용하려면 필요 ID 수', sub: '독립 인증이 필요한 포털 기준', cls: 'stat-card__value--warning' },
     { value: patternA + '개 (' + Math.round(patternA / stats.portalCount * 100) + '%)', label: 'data.go.kr만으로 동작', sub: '나머지 ' + (stats.portalCount - patternA) + '개는 별도 가입 필요', cls: 'stat-card__value--neutral' }
   ];
 

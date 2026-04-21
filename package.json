@@ -1,0 +1,12 @@
+{
+  "name": "k-gapi",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Static dashboard and reports for the Korean public Open API survey.",
+  "scripts": {
+    "test": "node scripts/validate.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

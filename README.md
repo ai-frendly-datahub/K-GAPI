@@ -130,7 +130,7 @@
 10. OAuth 2.0 전환
 11. 정부 공식 MCP 서버 구축
 
-> 상세 내용: [`output/korea_improvement_roadmap.md`](output/korea_improvement_roadmap.md)
+> 상세 내용: [`report/korea_improvement_roadmap.md`](report/korea_improvement_roadmap.md)
 
 ---
 

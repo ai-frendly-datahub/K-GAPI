@@ -1,0 +1,70 @@
+name: Validate and Deploy K-GAPI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Run static validation
+        run: npm test
+
+  deploy:
+    if: github.event_name == 'push'
+    needs: validate
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - name: Assemble static site
+        run: |
+          mkdir -p _site
+          cp index.html _site/index.html
+          cp README.md _site/README.md
+          cp report.md _site/report.md
+          cp -r comparison _site/comparison
+          cp -r global _site/global
+          cp -r report _site/report
+          cp -r sample _site/sample
+          cp -r sector_reports _site/sector_reports
+          cp -r strategy _site/strategy
+          touch _site/.nojekyll
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./_site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

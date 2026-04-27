@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" data-visual-system="radar-unified-v2" data-visual-surface="workspace" data-visual-page="api-portfolio">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +7,7 @@
 <style>
 /* ===== CSS Variables ===== */
 :root {
+            --vs-font-sans: "Pretendard Variable", "Pretendard", "Segoe UI", Arial, sans-serif;
   --color-primary: #1a73e8;
   --color-primary-light: #e8f0fe;
   --color-primary-dark: #1557b0;
@@ -38,7 +39,7 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { font-size: 16px; scroll-behavior: smooth; }
 body {
-  font-family: var(--font);
+  font-family: var(--vs-font-sans, var(--font));
   background: var(--color-bg);
   color: var(--color-text);
   line-height: 1.6;

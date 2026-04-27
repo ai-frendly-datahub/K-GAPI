@@ -159,10 +159,26 @@ function testDashboardDomReferences() {
   }
 }
 
+function testVisualShellContract() {
+  const html = read("index.html");
+  const header = html.split(/\n/).slice(0, 3).join("\n");
+
+  if (!header.includes('data-visual-system="radar-unified-v2"')) {
+    fail("index.html is missing data-visual-system on the <html> shell");
+  }
+  if (!header.includes('data-visual-surface="workspace"')) {
+    fail("index.html is missing workspace surface metadata");
+  }
+  if (!header.includes('data-visual-page="api-portfolio"')) {
+    fail("index.html is missing api-portfolio page metadata");
+  }
+}
+
 const tests = [
   ["markdown links", testMarkdownLinks],
   ["dashboard script/data", testDashboardScript],
-  ["dashboard DOM references", testDashboardDomReferences]
+  ["dashboard DOM references", testDashboardDomReferences],
+  ["visual shell contract", testVisualShellContract]
 ];
 
 for (const [name, test] of tests) {
